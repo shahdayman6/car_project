@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\CarController;
@@ -11,11 +12,5 @@ Route::get('/', function () {
 
 
 Route::get('/', [CarController::class, 'index']);
-Route::get('/register', function () {
-    return view('cars.register');
-})->name('register');
 
-Route::get('/login', function () {
-    return view('cars.login');
-})->name('login');
-
+require __DIR__.'/auth.php';

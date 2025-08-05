@@ -147,14 +147,21 @@
     </h1>
 
     <div class="ml-auto space-x-4 flex items-center">
-        @auth
-            <span class="text-white text-lg font-medium">{{ Auth::user()->name }}</span>
-            <img src="https://i.pravatar.cc/40" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white">
-        @else
-            <a href="/login" class="bg-blue-700 text-white px-5 py-2 rounded-full text-lg hover:bg-blue-900 transition duration-300 shadow-md">Login</a>
-           <a href="{{ url('register') }}" class="bg-purple-700 text-white px-5 py-2 rounded-full text-lg hover:bg-purple-900 transition duration-300 shadow-md">Register</a>
-        @endauth
+    @auth
+        <span class="text-white text-lg font-medium">{{ Auth::user()->name }}</span>
+        <img src="https://i.pravatar.cc/40" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="ml-4 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-800 transition duration-300 shadow-md">
+                Logout
+            </button>
+        </form>
+    @else
+        <a href="{{ route('login') }}" class="bg-blue-700 text-white px-5 py-2 rounded-full text-lg hover:bg-blue-900 transition duration-300 shadow-md">Login</a>
+        <a href="{{ route('register') }}" class="bg-purple-700 text-white px-5 py-2 rounded-full text-lg hover:bg-purple-900 transition duration-300 shadow-md">Register</a>
+    @endauth
     </div>
+
 </nav>
 
             <!-- Car Showcase -->
