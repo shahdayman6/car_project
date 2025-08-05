@@ -149,7 +149,11 @@
     <div class="ml-auto space-x-4 flex items-center">
     @auth
         <span class="text-white text-lg font-medium">{{ Auth::user()->name }}</span>
-        <img src="https://i.pravatar.cc/40" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white">
+       <img 
+    src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('images/default-user-bw.png.jpg') }}" 
+    alt="User Avatar" 
+    class="w-10 h-10 rounded-full border-2 border-white"
+/>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="ml-4 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-800 transition duration-300 shadow-md">
