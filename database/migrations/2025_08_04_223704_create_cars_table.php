@@ -17,6 +17,7 @@ return new class extends Migration
         $table->string('model');
         $table->integer('year');
         $table->integer('price');
+         $table->json('images'); // نخزن الصور كمصفوفة JSON
         $table->timestamps();
     });
 }

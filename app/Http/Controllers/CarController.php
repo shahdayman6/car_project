@@ -3,56 +3,52 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Car;
 
 class CarController extends Controller
 {
-    public function index()
+    public function masterPage()
     {
-        $cars = [
-            [
-                'name' => 'Toyota Corolla 2025',
-                'price' => '$22,000',
-                'images' => ['toyota_1.jpg', 'toyota_2.jpg']
-            ],
-            [
-                'name' => 'BMW X5 2024',
-                'price' => '$48,000',
-                'images' => ['BMW_1.jpg', 'BMW_2.jpg']
-            ],
-             [
-                'name' => 'Hyundai Elantra 2024',
-                'price' => '$48,000',
-                'images' => ['hyundai_1.jpg', 'hyundai_2.jpg']
-            ],
-             [
-                'name' => 'Jaguar XF s 2024',
-                'price' => '$120,000',
-                'images' => ['jaguar_1.jpg', 'jaguar_2.jpg', 'jaguar_3.jpg']
-            ],
-            [
-                'name' => 'Mercedes benz 2025',
-                'price' => '$78,000',
-                'images' => ['mercedes_1.jpg', 'mercedes_2.jpg','mercedes_3.jpg','mercedes_4.jpg']
-            ],
-             [
-                'name' => 'Porsche gt3 rs 2024',
-                'price' => '$90,000',
-                'images' => ['porsche_1.jpg', 'porsche_2.jpg', 'porsche_3.jpg']
-            ],
-             [
-                'name' => 'Ferrari car aesthetic 2025',
-                'price' => '$110,000',
-                'images' => ['ferrari_1.jpg', 'ferrari_2.jpg', 'ferrari_3.jpg']
-            ],
-            [
-                'name' => 'KIA sportage 2023',
-                'price' => '$98,000',
-                'images' => ['kia_1.jpg', 'kia_2.jpg','kia_3.jpg', 'kia_4.jpg']
-            ],
-             
-        ];
+        $cars = Car::all();
 
-        return view('cars/Master', compact('cars'));
+        // لو ما عملتيش casts في الموديل، فكي تشفير الصور هنا
+        foreach ($cars as $car) {
+            // لو images ما زالت string (JSON) ففكي التشفير
+            if (is_string($car->images)) {
+                $car->images = json_decode($car->images);
+            }
+
+            // دمج الاسم
+            $car->name = $car->brand . ' ' . $car->model;
+        }
+
+        return view('cars.Master', compact('cars'));
     }
-    
+
+public function show($id)
+{
+    $car = Car::findOrFail($id);
+
+    if (is_string($car->images)) {
+        $car->images = json_decode($car->images);
+    }
+
+    $car->name = $car->brand . ' ' . $car->model;
+
+    return view('cars.show', compact('car'));
+}
+
+public function buyPage($id)
+{
+    $car = Car::findOrFail($id);
+    return view('cars.buy', compact('car'));
+}
+
+public function buy(Request $request, $id)
+{
+    // هنا يتم تنفيذ الشراء (ممكن تخزين الطلب في جدول جديد مثلاً)
+
+    return redirect()->route('cars.show', $id)->with('success', 'Your request has been sent!');
+}
+
 }

@@ -25,55 +25,49 @@
         " 
         class="flex h-screen overflow-hidden transition-all duration-500 ease-in-out"
     >
-        <!-- Sidebar -->
-       <aside 
+      <!-- Sidebar -->
+<aside 
     :class="sidebarOpen ? 'w-64' : 'w-0'" 
     class="bg-gray-950 text-white transition-all duration-500 ease-in-out overflow-hidden shadow-2xl z-50 border-r border-gray-800"
 >
     <!-- Logo / Title -->
     <div class="p-6 text-center border-b border-gray-800">
         <div class="text-3xl font-extrabold text-purple-400 drop-shadow-lg tracking-wide">
-            🚘 AutoGalaxy
+            🚘 Galaxy Motors
         </div>
         <p class="text-sm text-gray-400 mt-1">Drive Your Dream</p>
-    </div>
-
-    <!-- Language & Dark/Light Mode Toggle -->
-    <div class="p-4 space-y-6 text-lg font-medium">
-        <button 
-            id="lang-toggle" 
-            class="px-4 py-2 w-full bg-gray-800 text-white rounded-lg hover:bg-purple-700 focus:outline-none transition duration-300"
-            onclick="toggleLanguage()"
-        >
-            English
-        </button>
-        <button 
-            id="theme-toggle" 
-            class="px-4 py-2 w-full bg-gray-800 text-white rounded-lg hover:bg-purple-700 focus:outline-none transition duration-300"
-            onclick="toggleTheme()"
-        >
-            Toggle Dark Mode
-        </button>
     </div>
 
     <!-- Menu Items -->
     <ul class="p-5 space-y-4 text-lg font-medium">
         <li>
+            <a href="{{ route('home') }}" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
+    <i class="fas fa-home text-xl group-hover:scale-125 transition-transform"></i>
+    <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
+</a>
+        </li>
+        <li>
             <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-home text-xl group-hover:scale-125 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
+                <i class="fas fa-car text-xl group-hover:rotate-12 transition-transform"></i>
+                <span class="group-hover:tracking-wider transition-all duration-300">Buy a Car</span>
             </a>
         </li>
         <li>
             <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-car-side text-xl group-hover:rotate-12 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">All Cars</span>
+                <i class="fas fa-dollar-sign text-xl group-hover:rotate-6 transition-transform"></i>
+                <span class="group-hover:tracking-wider transition-all duration-300">Sell a Car</span>
             </a>
         </li>
         <li>
             <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-tools text-xl group-hover:rotate-6 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Spare Parts</span>
+                <i class="fas fa-cogs text-xl group-hover:scale-110 transition-transform"></i>
+                <span class="group-hover:tracking-wider transition-all duration-300">Buy Spare Parts</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
+                <i class="fas fa-exchange-alt text-xl group-hover:rotate-6 transition-transform"></i>
+                <span class="group-hover:tracking-wider transition-all duration-300">Sell Spare Parts</span>
             </a>
         </li>
         <li>
@@ -82,68 +76,15 @@
                 <span class="group-hover:tracking-wider transition-all duration-300">Offers</span>
             </a>
         </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-envelope text-xl group-hover:translate-x-1 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Contact Us</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-question-circle text-xl group-hover:scale-110 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">FAQs</span>
-            </a>
-        </li>
     </ul>
 </aside>
-
-<script>
-    // Toggle Dark/Light Mode
-    function toggleTheme() {
-        const currentTheme = localStorage.getItem('theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.body.classList.toggle('dark', newTheme === 'dark');
-        localStorage.setItem('theme', newTheme);
-    }
-
-    // Set initial theme on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.body.classList.toggle('dark', savedTheme === 'dark');
-    });
-
-    // Toggle language (English / Arabic)
-    function toggleLanguage() {
-        const currentLang = localStorage.getItem('lang');
-        const newLang = currentLang === 'ar' ? 'en' : 'ar';
-        localStorage.setItem('lang', newLang);
-        updateLanguage(newLang);
-    }
-
-    function updateLanguage(lang) {
-        //const langText = lang === 'ar' ? 'العربية' : 'English';
-        const themeText = lang === 'ar' ? 'تبديل الوضع المظلم' : 'Toggle Dark Mode';
-        const menuItems = document.querySelectorAll('ul li a span');
-        menuItems.forEach(item => {
-           // item.textContent = lang === 'ar' ? item.textContent.replace(/Home/, 'الصفحة الرئيسية').replace(/All Cars/, 'جميع السيارات').replace(/Spare Parts/, 'قطع الغيار').replace(/Offers/, 'العروض').replace(/Contact Us/, 'اتصل بنا').replace(/FAQs/, 'الأسئلة الشائعة') : item.textContent;
-        });
-        document.querySelector('#lang-toggle').textContent = langText;
-        document.querySelector('#theme-toggle').textContent = themeText;
-    }
-
-    // Set initial language on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedLang = localStorage.getItem('lang') || 'en';
-        updateLanguage(savedLang);
-    });
-</script>
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-h-screen">
         <nav class="bg-gray-950 p-4 flex items-center shadow-md relative justify-between">
     <!-- ✅ الشعار واسم الموقع -->
     <div class="flex items-center gap-4">
-    <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="w-20 h-20 rounded-full shadow-lg">
+    <img src="{{ asset('images/logo3.jpg') }}" alt="Logo" class="w-20 h-20 rounded-full shadow-lg">
     <span class="text-purple-500 font-extrabold text-2xl tracking-wider text-center">Galaxy Motors</span>
 </div>
 
@@ -185,7 +126,7 @@
                             <div class="relative h-64 overflow-hidden group">
                                 @foreach ($car['images'] as $i => $image)
                                     <img 
-                                        src="{{ asset('images/cars/' . '/' . $image) }}" 
+                                        src="{{ asset('images/cars/'  . $image) }}" 
                                         alt="{{ $car['name'] }}"
                                         class="absolute w-full h-full object-cover car-image car-{{ $index }}"
                                         style="opacity: {{ $i === 0 ? 1 : 0 }};"
@@ -196,8 +137,11 @@
                             </div>
                             <div class="p-4">
                                 <h2 class="text-xl font-bold text-purple-400 mb-2">{{ $car['name'] }}</h2>
-                                <p class="text-gray-300 mb-4">{{ $car['price'] }}</p>
-                                <a href="#" class="inline-block px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-800 transition">View Details</a>
+                                <p class="text-gray-300 mb-4">{{ $car['price'] }} $</p>
+                                <p class="text-gray-400 mb-2">Year: {{ $car['year'] }}</p>
+                                <a href="{{ route('cars.show', ['id' => $car->id]) }}" class="inline-block px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-800 transition">
+    View Details
+</a>
                             </div>
                         </div>
                     @endforeach
