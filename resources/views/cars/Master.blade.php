@@ -62,7 +62,7 @@
                 <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Buy a Car</a>
             </li>
             <li>
-                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Sell a Car</a>
+                <a href="{{ route('cars.create') }}" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Sell a Car</a>
             </li>
         </ul>
     </li>

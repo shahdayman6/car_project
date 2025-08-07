@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Car;
 
 
+Route::get('/sell', [CarController::class, 'create'])->name('cars.create');
+Route::post('/cars', [CarController::class, 'store'])->name('cars.store');
 
 Route::get('/dashboard', function () {
     return view('dashboard'); // تأكدي إن فيه ملف اسمه dashboard.blade.php
