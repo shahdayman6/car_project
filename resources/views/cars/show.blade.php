@@ -5,7 +5,7 @@
     <h2 class="text-4xl font-extrabold text-purple-400 mb-8 text-center">{{ $car->name }}</h2>
 
     {{-- صور السيارة --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-10">
         @foreach($car->images as $image)
             <div class="overflow-hidden rounded-xl shadow-lg transform hover:scale-105 transition duration-300">
               <img src="{{ asset('images/cars/' . $image) }}" alt="Car Image" class="w-full h-64 object-cover">

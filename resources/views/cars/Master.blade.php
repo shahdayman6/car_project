@@ -39,81 +39,113 @@
     </div>
 
     <!-- Menu Items -->
-    <ul class="p-5 space-y-4 text-lg font-medium">
-        <li>
-            <a href="{{ route('home') }}" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-    <i class="fas fa-home text-xl group-hover:scale-125 transition-transform"></i>
-    <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
-</a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-car text-xl group-hover:rotate-12 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Buy a Car</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-dollar-sign text-xl group-hover:rotate-6 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Sell a Car</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-cogs text-xl group-hover:scale-110 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Buy Spare Parts</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-exchange-alt text-xl group-hover:rotate-6 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Sell Spare Parts</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-                <i class="fas fa-tags text-xl group-hover:scale-110 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Offers</span>
-            </a>
-        </li>
-    </ul>
+  <ul class="p-5 space-y-4 text-lg font-medium">
+    <!-- Home -->
+    <li>
+        <a href="{{ route('home') }}" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
+            <i class="fas fa-home text-xl group-hover:scale-125 transition-transform"></i>
+            <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
+        </a>
+    </li>
+
+    <!-- Cars Dropdown -->
+    <li x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-car text-xl"></i>
+                <span>Cars</span>
+            </div>
+            <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        </button>
+        <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
+            <li>
+                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Buy a Car</a>
+            </li>
+            <li>
+                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Sell a Car</a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Spare Parts Dropdown -->
+    <li x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-cogs text-xl"></i>
+                <span>Spare Parts</span>
+            </div>
+            <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        </button>
+        <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
+            <li>
+                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Buy Spare Parts</a>
+            </li>
+            <li>
+                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Sell Spare Parts</a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Offers -->
+    <li>
+        <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
+            <i class="fas fa-tags text-xl group-hover:scale-110 transition-transform"></i>
+            <span class="group-hover:tracking-wider transition-all duration-300">Offers</span>
+        </a>
+    </li>
+</ul>
 </aside>
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-h-screen">
-        <nav class="bg-gray-950 p-4 flex items-center shadow-md relative justify-between">
-    <!-- ✅ الشعار واسم الموقع -->
-    <div class="flex items-center gap-4">
-    <img src="{{ asset('images/logo3.jpg') }}" alt="Logo" class="w-20 h-20 rounded-full shadow-lg">
-    <span class="text-purple-500 font-extrabold text-2xl tracking-wider text-center">Galaxy Motors</span>
-</div>
+      <nav class="bg-gray-950 p-4 shadow-md relative">
+    <!-- ✅ الشعار واسم الموقع + بيانات المستخدم -->
+    <div class="flex justify-between items-center mb-4">
+        <!-- ⬅ اللوجو والاسم -->
+        <div class="flex items-center gap-4">
+            <img src="{{ asset('images/logo3.jpg') }}" alt="Logo" class="w-20 h-20 rounded-full shadow-lg">
+            <span class="text-purple-500 font-extrabold text-2xl tracking-wider">Galaxy Motors</span>
+        </div>
 
-    <!-- ✅ بيانات المستخدم -->
-    <div class="ml-auto relative" x-data="{ open: false }" @click.away="open = false">
-        @auth
-            <div @click="open = !open" class="cursor-pointer text-center">
-                <img 
-                    src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('images/default-user-bw.png.jpg') }}" 
-                    alt="User Avatar" 
-                    class="w-20 h-20 rounded-full border-4 border-purple-500 mx-auto shadow-xl transition hover:scale-105"
-                />
-                <span class="block mt-2 text-purple-400 font-bold text-sm tracking-wide">
-                    {{ Auth::user()->name }}
-                </span>
-            </div>
+        <!-- ➡ بيانات المستخدم -->
+        <div class="relative" x-data="{ open: false }" @click.away="open = false">
+            @auth
+                <div @click="open = !open" class="cursor-pointer text-right">
+                    <img 
+                        src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('images/default-user-bw.png.jpg') }}" 
+                        alt="User Avatar" 
+                        class="w-16 h-16 rounded-full border-4 border-purple-500 shadow-xl inline-block"
+                    />
+                    <span class="block mt-1 text-purple-400 font-bold text-sm tracking-wide">
+                        {{ Auth::user()->name }}
+                    </span>
+                </div>
 
-            <div x-show="open" x-transition class="absolute right-0 mt-4 w-36 bg-gray-800 text-white rounded-xl shadow-2xl z-50 p-2">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full text-left px-4 py-2 hover:bg-red-600 hover:text-white rounded-md transition font-semibold">
-                        🚪 Logout
-                    </button>
-                </form>
-            </div>
-        @else
-            <a href="{{ route('login') }}" class="bg-blue-700 text-white px-5 py-2 rounded-full text-lg hover:bg-blue-900 transition duration-300 shadow-md ml-4">Login</a>
-            <a href="{{ route('register') }}" class="bg-purple-700 text-white px-5 py-2 rounded-full text-lg hover:bg-purple-900 transition duration-300 shadow-md ml-2">Register</a>
-        @endauth
+                <div x-show="open" x-transition class="absolute right-0 mt-4 w-36 bg-gray-800 text-white rounded-xl shadow-2xl z-50 p-2">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-2 hover:bg-red-600 hover:text-white rounded-md transition font-semibold">
+                            🚪 Logout
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="flex gap-2">
+                    <a href="{{ route('login') }}" class="bg-blue-700 text-white px-5 py-2 rounded-full text-lg hover:bg-blue-900 transition duration-300 shadow-md">Login</a>
+                    <a href="{{ route('register') }}" class="bg-purple-700 text-white px-5 py-2 rounded-full text-lg hover:bg-purple-900 transition duration-300 shadow-md">Register</a>
+                </div>
+            @endauth
+        </div>
+    </div>
+
+    <!-- ✅ شريط البحث -->
+    <div>
+        <input 
+            type="text" 
+            placeholder="Search by name or year..." 
+            oninput="handleSearch(this.value)" 
+            class="w-full px-4 py-4 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
     </div>
 </nav>
 
@@ -182,5 +214,27 @@
             }
         });
     </script>
+
+    <script>
+    function handleSearch(query) {
+        const isNumeric = /^\d+$/.test(query.trim());
+        const cards = document.querySelectorAll(".grid > div");
+
+        cards.forEach(card => {
+            const name = card.querySelector("h2")?.innerText.toLowerCase();
+            const year = card.querySelector("p:nth-of-type(2)")?.innerText.match(/\d{4}/)?.[0];
+
+            if (query.trim() === "") {
+                card.style.display = "block";
+            } else if (isNumeric && year) {
+                card.style.display = year.includes(query) ? "block" : "none";
+            } else if (name) {
+                card.style.display = name.includes(query.toLowerCase()) ? "block" : "none";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
 </body>
 </html>
