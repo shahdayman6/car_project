@@ -156,14 +156,24 @@
                     @foreach ($cars as $index => $car)
                         <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500">
                             <div class="relative h-64 overflow-hidden group">
-                                @foreach ($car['images'] as $i => $image)
-                                    <img 
-                                        src="{{ asset('images/cars/'  . $image) }}" 
-                                        alt="{{ $car['name'] }}"
-                                        class="absolute w-full h-full object-cover car-image car-{{ $index }}"
-                                        style="opacity: {{ $i === 0 ? 1 : 0 }};"
-                                    >
-                                @endforeach
+                              @foreach ($car['images'] as $i => $image)
+    @php
+        $imageFromImages = 'images/cars/' . $image;
+        $imageFromStorage = 'storage/cars/' . $image;
+
+        $pathInImages = public_path($imageFromImages);
+        $pathInStorage = public_path($imageFromStorage);
+
+        $finalImagePath = file_exists($pathInImages) ? asset($imageFromImages) : asset($imageFromStorage);
+    @endphp
+
+    <img 
+        src="{{ $finalImagePath }}" 
+        alt="{{ $car['name'] }}"
+        class="absolute w-full h-full object-cover car-image car-{{ $index }}"
+        style="opacity: {{ $i === 0 ? 1 : 0 }};"
+    >
+@endforeach
                                 <button onclick="prevImage({{ $index }})" class="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-purple-700 bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">‹</button>
                                 <button onclick="nextImage({{ $index }})" class="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-purple-700 bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">›</button>
                             </div>

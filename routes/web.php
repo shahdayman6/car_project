@@ -17,7 +17,7 @@ Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
 // صفحة الشراء محمية ب login
 Route::middleware(['auth'])->group(function () {
     Route::get('/cars/{id}/buy', [CarController::class, 'buyPage'])->name('cars.buy');
-    Route::post('/cars/{id}/buy', [CarController::class, 'buy'])->name('cars.buy.submit');
+    Route::post('/cars/{id}/buy', [CarController::class, 'buySubmit'])->name('cars.buy.submit');
 });
 
 Route::get('/', function () {

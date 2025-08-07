@@ -14,4 +14,6 @@ class Car extends Model
     protected $casts = [
         'images' => 'array',
     ];
+
+    
 }
