@@ -1,25 +1,29 @@
-
 <?php
 
 use App\Http\Controllers\CarController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CarRequestController;
 use App\Models\Car;
-
-
-Route::get('/sell', [CarController::class, 'create'])->name('cars.create');
-Route::post('/cars', [CarController::class, 'store'])->name('cars.store');
-
-Route::get('/dashboard', function () {
-    return view('dashboard'); // تأكدي إن فيه ملف اسمه dashboard.blade.php
-})->name('dashboard');
-Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
-
-// صفحة الشراء محمية ب login
+ 
+// بيع سيارة → لازم تسجيل دخول
 Route::middleware(['auth'])->group(function () {
+    Route::get('/sell', [CarController::class, 'create'])->name('cars.create');
+    Route::post('/cars', [CarController::class, 'store'])->name('cars.store');
+  
+    // صفحة الشراء محمية ب login
     Route::get('/cars/{id}/buy', [CarController::class, 'buyPage'])->name('cars.buy');
     Route::post('/cars/{id}/buy', [CarController::class, 'buy'])->name('cars.buy.submit');
+    Route::get('/buy-car', [CarRequestController::class, 'showForm'])->name('cars.request.form');
+    Route::post('/buy-car', [CarRequestController::class, 'handleForm'])->name('cars.request.submit');
 });
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
+
+// الصفحة الرئيسية
 Route::get('/', function () {
     $cars = Car::whereIn('year', [date('Y'), date('Y') - 1])->get();
 
@@ -31,6 +35,7 @@ Route::get('/', function () {
     return view('cars.Master', compact('cars'));
 });
 
+// صفحة الماستر
 Route::get('/master', [CarController::class, 'masterPage'])->name('home');
 
 require __DIR__.'/auth.php';

@@ -6,7 +6,7 @@ use App\Models\Car;
 
 class CarController extends Controller
 {
-    public function masterPage()
+ public function masterPage()
     {
         $cars = Car::all();
 
