@@ -27,14 +27,15 @@ public function handleForm(Request $request)
         $year  = $validated['year'];
 
         // الاتصال بـ API باستخدام Http Client
-        $response = Http::withHeaders([
-            'X-RapidAPI-Key' => 'Z+1yGQIP4AaDmJAcGsygLw==9O2dUMCEin9uTnly',
-            'X-RapidAPI-Host' => 'cars-by-api-ninjas.p.rapidapi.com',
+      $response = Http::withHeaders([
+         'X-RapidAPI-Key' => '03ec61ece9msha1d1044008bffc7p141dc2jsnf6f469c792f7', // المفتاح الجديد
+         'X-RapidAPI-Host' => 'cars-by-api-ninjas.p.rapidapi.com',
         ])->get('https://cars-by-api-ninjas.p.rapidapi.com/v1/cars', [
-            'make'  => $brand,
-            'model' => $model,
-            'year'  => $year,
+          'brand'  => $brand,
+          'model' => $model,
+          'year'  => $year,
         ]);
+
 
         // التحقق من نجاح الاتصال
         if ($response->successful()) {
