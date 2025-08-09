@@ -12,9 +12,13 @@ Route::middleware(['auth'])->group(function () {
   
     // صفحة الشراء محمية ب login
     Route::get('/cars/{id}/buy', [CarController::class, 'buyPage'])->name('cars.buy');
+<<<<<<< HEAD
     Route::post('/cars/{id}/buy', [CarController::class, 'buy'])->name('cars.buy.submit');
     Route::get('/buy-car', [CarRequestController::class, 'showForm'])->name('cars.request.form');
     Route::post('/buy-car', [CarRequestController::class, 'handleForm'])->name('cars.request.submit');
+=======
+    Route::post('/cars/{id}/buy', [CarController::class, 'buySubmit'])->name('cars.buy.submit');
+>>>>>>> origin/shahdE
 });
 
 Route::get('/dashboard', function () {

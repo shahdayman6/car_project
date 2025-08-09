@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Car;
-
+use App\Models\PurchaseRequest;
 class CarController extends Controller
 {
  public function masterPage()
@@ -71,7 +71,7 @@ public function store(Request $request)
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $image) {
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/cars', $filename);
+            $image->storeAs('public/cars/', $filename);
             $imagePaths[] = $filename;
         }
     }
@@ -85,5 +85,51 @@ public function store(Request $request)
     $car->save();
 
     return redirect()->route('home')->with('success', 'Car added successfully!');
+}
+public function submitBuy(Request $request, Car $car)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'message' => 'nullable|string',
+        'quantity' => 'required|integer|min:1',
+        'payment_type' => 'required|in:cash,installments',
+    ]);
+
+    // احفظ البيانات أو ابعتها بالبريد أو أي لوجيك إضافي
+    // مثلاً:
+    PurchaseRequest::create([
+        'car_id' => $car->id,
+        'user_id' => auth()->id(),
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'message' => $request->message,
+        'quantity' => $request->quantity,
+        'payment_type' => $request->payment_type,
+    ]);
+
+    return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+}
+
+public function buySubmit(Request $request, $carId)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:255',
+        'quantity' => 'required|integer|min:1',
+        'payment_type' => 'required|in:cash,installments',
+        'message' => 'nullable|string',
+    ]);
+
+    PurchaseRequest::create([
+        'car_id' => $carId,
+        'name' => $validated['name'],
+        'phone' => $validated['phone'],
+        'quantity' => $validated['quantity'],
+        'payment_type' => $validated['payment_type'],
+        'message' => $validated['message'] ?? null,
+    ]);
+
+    return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
 }
 }
