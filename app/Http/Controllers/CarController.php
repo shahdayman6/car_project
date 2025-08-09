@@ -71,7 +71,11 @@ public function store(Request $request)
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $image) {
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/cars/', $filename);
+            
+            // نخزن الصورة في مجلد storage/public/cars
+            $image->storeAs('public/cars', $filename);
+
+            // نخزن اسم الملف لعرضه لاحقاً
             $imagePaths[] = $filename;
         }
     }
@@ -81,7 +85,7 @@ public function store(Request $request)
     $car->model = $request->model;
     $car->year = $request->year;
     $car->price = $request->price;
-    $car->images = json_encode($imagePaths); // احفظ الصور كـ JSON
+    $car->images = json_encode($imagePaths); // نحفظ الصور كـ JSON
     $car->save();
 
     return redirect()->route('home')->with('success', 'Car added successfully!');
