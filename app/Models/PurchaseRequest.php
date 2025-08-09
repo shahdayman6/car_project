@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class PurchaseRequest extends Model
 {
+<<<<<<< HEAD
+    //
+=======
     protected $fillable = [
     'car_id',
     'name',
@@ -14,4 +17,5 @@ class PurchaseRequest extends Model
     'payment_type',
     'message',
 ];
+>>>>>>> origin/shahdE
 }

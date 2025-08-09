@@ -47,44 +47,59 @@
             <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
         </a>
     </li>
+    
 
-    <!-- Cars Dropdown -->
-    <li x-data="{ open: false }">
-        <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
-            <div class="flex items-center gap-4">
-                <i class="fas fa-car text-xl"></i>
-                <span>Cars</span>
-            </div>
-            <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
-        </button>
-        <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
-            <li>
-                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Buy a Car</a>
-            </li>
-            <li>
-                <a href="{{ route('cars.create') }}" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Sell a Car</a>
-            </li>
-        </ul>
-    </li>
+<!-- Cars Dropdown -->
+<li x-data="{ open: false }">
+    <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-car text-xl"></i>
+            <span>Cars</span>
+        </div>
+        <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+    </button>
+    <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
+        <li>
+            <a href="{{ Auth::check() ? route('cars.request.form') : route('login') }}"
+               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
+               Buy a Car
+            </a>
+        </li>
+        <li>
+            <a href="{{ Auth::check() ? route('cars.create') : route('login') }}"
+               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
+               Sell a Car
+            </a>
+        </li>
+    </ul>
+</li>
 
-    <!-- Spare Parts Dropdown -->
-    <li x-data="{ open: false }">
-        <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
-            <div class="flex items-center gap-4">
-                <i class="fas fa-cogs text-xl"></i>
-                <span>Spare Parts</span>
-            </div>
-            <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
-        </button>
-        <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
-            <li>
-                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Buy Spare Parts</a>
-            </li>
-            <li>
-                <a href="#" class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">Sell Spare Parts</a>
-            </li>
-        </ul>
-    </li>
+<!-- Spare Parts Dropdown -->
+<li x-data="{ open: false }">
+    <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-cogs text-xl"></i>
+            <span>Spare Parts</span>
+        </div>
+        <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+    </button>
+    <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
+        <li>
+            <a href="{{ Auth::check() ? route('login') : route('login') }}"  {{-- عدلي الراوت ده لو عندك صفحة شراء قطع غيار --}}
+               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
+               Buy Spare Parts
+            </a>
+        </li>
+        <li>
+            <a href="{{ Auth::check() ? route('login') : route('login') }}" {{-- عدلي الراوت ده لو عندك صفحة بيع قطع غيار --}}
+               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
+               Sell Spare Parts
+            </a>
+        </li>
+    </ul>
+</li>
+
+
 
     <!-- Offers -->
     <li>
