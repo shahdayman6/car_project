@@ -27,89 +27,142 @@
     >
       <!-- Sidebar -->
 <aside 
-    :class="sidebarOpen ? 'w-64' : 'w-0'" 
-    class="bg-gray-950 text-white transition-all duration-500 ease-in-out overflow-hidden shadow-2xl z-50 border-r border-gray-800"
+    :class="sidebarOpen ? 'w-72' : 'w-0'" 
+    class="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white transition-all duration-500 ease-in-out overflow-hidden shadow-[0_0_35px_rgba(0,0,0,0.6)] z-50 border-r border-gray-800"
 >
     <!-- Logo / Title -->
     <div class="p-6 text-center border-b border-gray-800">
-        <div class="text-3xl font-extrabold text-purple-400 drop-shadow-lg tracking-wide">
+        <div class="text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg tracking-wide">
             🚘 Galaxy Motors
         </div>
-        <p class="text-sm text-gray-400 mt-1">Drive Your Dream</p>
+        <p class="text-sm text-gray-400 mt-1 italic">Drive Your Dream</p>
     </div>
 
     <!-- Menu Items -->
-  <ul class="p-5 space-y-4 text-lg font-medium">
-    <!-- Home -->
-    <li>
-        <a href="{{ route('home') }}" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-            <i class="fas fa-home text-xl group-hover:scale-125 transition-transform"></i>
-            <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
-        </a>
-    </li>
-    
+    <ul class="p-5 space-y-4 text-lg font-medium">
+        <!-- Home -->
+        <li>
+            <a href="{{ route('home') }}" 
+               class="flex items-center gap-4 px-5 py-3 bg-gray-850 hover:bg-gradient-to-r hover:from-purple-700 hover:to-pink-600 rounded-xl transition-all duration-300 group shadow-md hover:shadow-purple-500/30">
+                <i class="fas fa-home text-xl group-hover:scale-125 transition-transform"></i>
+                <span class="group-hover:tracking-wider transition-all duration-300">Home</span>
+            </a>
+        </li>
 
-<!-- Cars Dropdown -->
+        <!-- Cars Dropdown -->
 <li x-data="{ open: false }">
-    <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
+    <!-- Main Button -->
+    <button @click="open = !open" 
+        class="w-full flex items-center justify-between px-5 py-3 
+               bg-gradient-to-r from-gray-800 to-gray-900 
+               hover:from-purple-700 hover:to-pink-600
+               rounded-xl transition-all duration-300 
+               shadow-md hover:shadow-purple-500/40 
+               group">
         <div class="flex items-center gap-4">
-            <i class="fas fa-car text-xl"></i>
-            <span>Cars</span>
+            <i class="fas fa-car text-xl transition-transform duration-300 group-hover:scale-110"></i>
+            <span class="group-hover:tracking-wider transition-all duration-300">Cars</span>
         </div>
-        <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        <i :class="open ? 'fas fa-chevron-up rotate-180' : 'fas fa-chevron-down'"
+           class="transition-transform duration-300 ease-in-out"></i>
     </button>
-    <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
+
+    <!-- Dropdown Items -->
+    <ul x-show="open" x-transition class="mt-2 space-y-2">
         <li>
             <a href="{{ Auth::check() ? route('cars.request.form') : route('login') }}"
-               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
-               Buy a Car
+               class="flex items-center justify-between px-5 py-3 
+                      bg-gradient-to-r from-gray-800 to-gray-900
+                      hover:from-purple-700 hover:to-pink-600
+                      rounded-xl transition-all duration-300 
+                      shadow-md hover:shadow-purple-500/40">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <span>Buy a Car</span>
+                </div>
+                <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </li>
         <li>
             <a href="{{ Auth::check() ? route('cars.create') : route('login') }}"
-               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
-               Sell a Car
+               class="flex items-center justify-between px-5 py-3 
+                      bg-gradient-to-r from-gray-800 to-gray-900
+                      hover:from-purple-700 hover:to-pink-600
+                      rounded-xl transition-all duration-300 
+                      shadow-md hover:shadow-purple-500/40">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-tags text-lg"></i>
+                    <span>Sell a Car</span>
+                </div>
+                <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </li>
     </ul>
 </li>
 
-<!-- Spare Parts Dropdown -->
+        <!-- Spare Parts Dropdown -->
 <li x-data="{ open: false }">
-    <button @click="open = !open" class="w-full flex items-center justify-between px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300">
+    <!-- Main Button -->
+    <button @click="open = !open" 
+        class="w-full flex items-center justify-between px-5 py-3 
+               bg-gradient-to-r from-gray-800 to-gray-900 
+               hover:from-purple-700 hover:to-pink-600
+               rounded-xl transition-all duration-300 
+               shadow-md hover:shadow-purple-500/40 
+               group">
         <div class="flex items-center gap-4">
-            <i class="fas fa-cogs text-xl"></i>
-            <span>Spare Parts</span>
+            <i class="fas fa-cogs text-xl transition-transform duration-300 group-hover:scale-110"></i>
+            <span class="group-hover:tracking-wider transition-all duration-300">Spare Parts</span>
         </div>
-        <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        <i :class="open ? 'fas fa-chevron-up rotate-180' : 'fas fa-chevron-down'"
+           class="transition-transform duration-300 ease-in-out"></i>
     </button>
-    <ul x-show="open" x-transition class="mt-2 space-y-2 ml-8">
+
+    <!-- Dropdown Items -->
+    <ul x-show="open" x-transition class="mt-2 space-y-2">
         <li>
-            <a href="{{ Auth::check() ? route('login') : route('login') }}"  {{-- عدلي الراوت ده لو عندك صفحة شراء قطع غيار --}}
-               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
-               Buy Spare Parts
+            <a href="{{ Auth::check() ? route('login') : route('login') }}"
+               class="flex items-center justify-between px-5 py-3 
+                      bg-gradient-to-r from-gray-800 to-gray-900
+                      hover:from-purple-700 hover:to-pink-600
+                      rounded-xl transition-all duration-300 
+                      shadow-md hover:shadow-purple-500/40">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <span>Buy Spare Parts</span>
+                </div>
+                <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </li>
         <li>
-            <a href="{{ Auth::check() ? route('login') : route('login') }}" {{-- عدلي الراوت ده لو عندك صفحة بيع قطع غيار --}}
-               class="block px-4 py-2 bg-gray-700 hover:bg-purple-600 rounded">
-               Sell Spare Parts
+            <a href="{{ Auth::check() ? route('login') : route('login') }}"
+               class="flex items-center justify-between px-5 py-3 
+                      bg-gradient-to-r from-gray-800 to-gray-900
+                      hover:from-purple-700 hover:to-pink-600
+                      rounded-xl transition-all duration-300 
+                      shadow-md hover:shadow-purple-500/40">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-tags text-lg"></i>
+                    <span>Sell Spare Parts</span>
+                </div>
+                <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </li>
     </ul>
 </li>
 
 
-
-    <!-- Offers -->
-    <li>
-        <a href="#" class="flex items-center gap-4 px-5 py-3 bg-gray-800 hover:bg-purple-700 rounded-xl transition duration-300 group">
-            <i class="fas fa-tags text-xl group-hover:scale-110 transition-transform"></i>
-            <span class="group-hover:tracking-wider transition-all duration-300">Offers</span>
-        </a>
-    </li>
-</ul>
+        <!-- Offers -->
+        <li>
+            <a href="#" 
+               class="flex items-center gap-4 px-5 py-3 bg-gray-850 hover:bg-gradient-to-r hover:from-purple-700 hover:to-pink-600 rounded-xl transition-all duration-300 group shadow-md hover:shadow-purple-500/30">
+                <i class="fas fa-tags text-xl group-hover:scale-110 transition-transform"></i>
+                <span class="group-hover:tracking-wider transition-all duration-300">Offers</span>
+            </a>
+        </li>
+    </ul>
 </aside>
+
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-h-screen">

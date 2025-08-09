@@ -6,23 +6,33 @@ use App\Models\Car;
 use App\Models\PurchaseRequest;
 class CarController extends Controller
 {
- public function masterPage()
-    {
-        $cars = Car::all();
+public function masterPage()
+{
+    $cars = Car::all();
 
-        // لو ما عملتيش casts في الموديل، فكي تشفير الصور هنا
-        foreach ($cars as $car) {
-            // لو images ما زالت string (JSON) ففكي التشفير
-            if (is_string($car->images)) {
-                $car->images = json_decode($car->images);
-            }
-
-            // دمج الاسم
-            $car->name = $car->brand . ' ' . $car->model;
+    foreach ($cars as $car) {
+        if (is_string($car->images)) {
+            $car->images = json_decode($car->images);
         }
-
-        return view('cars.Master', compact('cars'));
+        $car->name = $car->brand . ' ' . $car->model;
     }
+
+    // تحويل الكائنات إلى مصفوفة فقط (لاستخدام أسهل في Blade/JS)
+    $carsArray = $cars->map(function($car) {
+        return [
+            'id' => $car->id,
+            'name' => $car->name,
+            'price' => $car->price,
+            'year' => $car->year,
+            'images' => collect($car->images)->map(function($img) {
+                return asset('storage/cars/' . $img);
+            })->toArray(),
+        ];
+    });
+
+    return view('cars.Master', ['cars' => $cars, 'carsArray' => $carsArray]);
+}
+
 
 public function show($id)
 {
