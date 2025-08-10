@@ -4,19 +4,22 @@ use App\Http\Controllers\CarController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarRequestController;
 use App\Models\Car;
- 
+
 // بيع سيارة → لازم تسجيل دخول
 Route::middleware(['auth'])->group(function () {
     Route::get('/sell', [CarController::class, 'create'])->name('cars.create');
     Route::post('/cars', [CarController::class, 'store'])->name('cars.store');
-  
+
     // صفحة الشراء محمية ب login
     Route::get('/cars/{id}/buy', [CarController::class, 'buyPage'])->name('cars.buy');
-
     Route::post('/cars/{id}/buy', [CarController::class, 'buy'])->name('cars.buy.submit');
+
+    // فورم طلب شراء سيارة
     Route::get('/buy-car', [CarRequestController::class, 'showForm'])->name('cars.request.form');
     Route::post('/buy-car', [CarRequestController::class, 'handleForm'])->name('cars.request.submit');
-    Route::post('/cars/{id}/buy', [CarController::class, 'buySubmit'])->name('cars.buy.submit');
+
+    // تأكيد الشراء (مسار منفصل عن buy)
+    Route::post('/cars/{id}/buy/confirm', [CarController::class, 'buySubmit'])->name('cars.buy.confirm');
 });
 
 Route::get('/dashboard', function () {
