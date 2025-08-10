@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Car extends Model
 {
-    protected $fillable = ['brand', 'model', 'year', 'price', 'images'];
+    protected $fillable = ['brand', 'model', 'year', 'price', 'images', 'user_id'];
+
 
     // علشان Laravel يفك تشفير الصور تلقائيًا
     protected $casts = [

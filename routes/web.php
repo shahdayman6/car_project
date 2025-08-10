@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CarController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarRequestController;
 use App\Models\Car;
 
@@ -12,7 +13,7 @@ Route::middleware(['auth'])->group(function () {
 
     // صفحة الشراء محمية ب login
     Route::get('/cars/{id}/buy', [CarController::class, 'buyPage'])->name('cars.buy');
-    Route::post('/cars/{id}/buy', [CarController::class, 'buy'])->name('cars.buy.submit');
+    Route::post('/cars/{id}/buy', [CarController::class, 'buysubmit'])->name('cars.buy.submit');
 
     // فورم طلب شراء سيارة
     Route::get('/buy-car', [CarRequestController::class, 'showForm'])->name('cars.request.form');
@@ -39,6 +40,17 @@ Route::get('/', function () {
 
     return view('cars.Master', compact('cars'));
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::delete('/cars/{car}', [ProfileController::class, 'destroyCar'])->name('profile.cars.delete');
+    Route::delete('/purchases/{purchase}', [ProfileController::class, 'destroyPurchase'])->name('profile.purchases.delete');
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/cars/{car}/edit', [CarController::class, 'edit'])->name('cars.edit');
+    Route::put('/cars/{car}', [CarController::class, 'update'])->name('cars.update');
+});
+
 
 // صفحة الماستر
 Route::get('/master', [CarController::class, 'masterPage'])->name('home');

@@ -27,32 +27,27 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-   public function store(Request $request): RedirectResponse
+  public function store(Request $request): RedirectResponse
 {
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+    $validated = $request->validate([
+        'name' => 'required|string|max:4096',
+        'email' => 'required|string|lowercase|email|max:255|unique:users,email',
         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'image' => ['nullable', 'image', 'max:2048'], // دعم اختيار صورة
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
     ]);
 
-    // معالجة الصورة
-    $imagePath = null;
     if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('profile_images', 'public');
+        $validated['image'] = $request->file('image')->store('profile_images', 'public');
     }
 
-    // إنشاء المستخدم
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'image' => $imagePath,
-    ]);
+    $validated['password'] = Hash::make($validated['password']);
+
+    $user = User::create($validated);
 
     event(new Registered($user));
     Auth::login($user);
 
     return redirect()->intended('/');
 }
+
 }

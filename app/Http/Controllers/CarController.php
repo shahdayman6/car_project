@@ -1,74 +1,153 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Models\PurchaseRequest;
+
 class CarController extends Controller
 {
-public function masterPage()
-{
-    $cars = Car::all();
+    public function masterPage()
+    {
+        $cars = Car::all();
 
-    foreach ($cars as $car) {
+        foreach ($cars as $car) {
+            if (is_string($car->images)) {
+                $car->images = json_decode($car->images);
+            }
+            $car->name = $car->brand . ' ' . $car->model;
+        }
+
+        $carsArray = $cars->map(function ($car) {
+            return [
+                'id' => $car->id,
+                'name' => $car->name,
+                'price' => $car->price,
+                'year' => $car->year,
+                'images' => collect($car->images)->map(function ($img) {
+                    return asset('storage/cars/' . $img);
+                })->toArray(),
+            ];
+        });
+
+        return view('cars.Master', ['cars' => $cars, 'carsArray' => $carsArray]);
+    }
+
+    public function show($id)
+    {
+        $car = Car::findOrFail($id);
+
         if (is_string($car->images)) {
             $car->images = json_decode($car->images);
         }
+
         $car->name = $car->brand . ' ' . $car->model;
+
+        return view('cars.show', compact('car'));
     }
 
-    // تحويل الكائنات إلى مصفوفة فقط (لاستخدام أسهل في Blade/JS)
-    $carsArray = $cars->map(function($car) {
-        return [
-            'id' => $car->id,
-            'name' => $car->name,
-            'price' => $car->price,
-            'year' => $car->year,
-            'images' => collect($car->images)->map(function($img) {
-                return asset('storage/cars/' . $img);
-            })->toArray(),
-        ];
-    });
-
-    return view('cars.Master', ['cars' => $cars, 'carsArray' => $carsArray]);
-}
-
-
-public function show($id)
-{
-    $car = Car::findOrFail($id);
-
-    if (is_string($car->images)) {
-        $car->images = json_decode($car->images);
+    public function buyPage($id)
+    {
+        $car = Car::findOrFail($id);
+        return view('cars.buy', compact('car'));
     }
 
-    $car->name = $car->brand . ' ' . $car->model;
+    public function create()
+    {
+        return view('cars.sellcar');
+    }
 
-    return view('cars.show', compact('car'));
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'brand' => 'required',
+            'model' => 'required',
+            'year' => 'required|integer',
+            'price' => 'required|numeric',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $imagePaths = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/cars', $filename);
+                $imagePaths[] = $filename;
+            }
+        }
+
+        $validated['images'] = json_encode($imagePaths);
+        $validated['user_id'] = auth()->id(); // صاحب العربية
+
+        Car::create($validated);
+
+        return redirect()->route('home')->with('success', 'Car added successfully!');
+    }
+
+    public function submitBuy(Request $request, Car $car)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'message' => 'nullable|string',
+            'quantity' => 'required|integer|min:1',
+            'payment_type' => 'required|in:cash,installments',
+        ]);
+
+        PurchaseRequest::create([
+            'car_id' => $car->id,
+            'user_id' => auth()->id(), // المشتري
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'message' => $request->message,
+            'quantity' => $request->quantity,
+            'payment_type' => $request->payment_type,
+        ]);
+
+        return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+    }
+
+    public function buySubmit(Request $request, $carId)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'quantity' => 'required|integer|min:1',
+            'payment_type' => 'required|in:cash,installments',
+            'message' => 'nullable|string',
+        ]);
+
+        PurchaseRequest::create([
+            'car_id' => $carId,
+            'user_id' => auth()->id(), // المشتري
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'quantity' => $validated['quantity'],
+            'payment_type' => $validated['payment_type'],
+            'message' => $validated['message'] ?? null,
+        ]);
+
+        return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+    }
+    public function edit(Car $car)
+{
+    // تحقق من أن صاحب السيارة هو المستخدم الحالي (اختياري)
+    if ($car->user_id !== auth()->id()) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    return view('cars.edit', compact('car'));
 }
 
-public function buyPage($id)
+public function update(Request $request, Car $car)
 {
-    $car = Car::findOrFail($id);
-    return view('cars.buy', compact('car'));
-}
+    if ($car->user_id !== auth()->id()) {
+        abort(403, 'Unauthorized action.');
+    }
 
-public function buy(Request $request, $id)
-{
-    // هنا يتم تنفيذ الشراء (ممكن تخزين الطلب في جدول جديد مثلاً)
-
-    return redirect()->route('cars.show', $id)->with('success', 'Your request has been sent!');
-}
-
-public function create()
-{
-    return view('cars.sellcar'); // <-- يشير إلى resources/views/cars/sell.blade.php
-}
-
-
-public function store(Request $request)
-{
-    $request->validate([
+    $validated = $request->validate([
         'brand' => 'required',
         'model' => 'required',
         'year' => 'required|integer',
@@ -80,70 +159,19 @@ public function store(Request $request)
 
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $image) {
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            
-            // نخزن الصورة في مجلد storage/public/cars
+            $filename = uniqid() . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/cars', $filename);
-
-            // نخزن اسم الملف لعرضه لاحقاً
             $imagePaths[] = $filename;
         }
+        $validated['images'] = json_encode($imagePaths);
+    } else {
+        // لو ما رفعش صور جديدة، احتفظ بالصور القديمة
+        $validated['images'] = $car->images;
     }
 
-    $car = new Car();
-    $car->brand = $request->brand;
-    $car->model = $request->model;
-    $car->year = $request->year;
-    $car->price = $request->price;
-    $car->images = json_encode($imagePaths); // نحفظ الصور كـ JSON
-    $car->save();
+    $car->update($validated);
 
-    return redirect()->route('home')->with('success', 'Car added successfully!');
-}
-public function submitBuy(Request $request, Car $car)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'required|string|max:20',
-        'message' => 'nullable|string',
-        'quantity' => 'required|integer|min:1',
-        'payment_type' => 'required|in:cash,installments',
-    ]);
-
-    // احفظ البيانات أو ابعتها بالبريد أو أي لوجيك إضافي
-    // مثلاً:
-    PurchaseRequest::create([
-        'car_id' => $car->id,
-        'user_id' => auth()->id(),
-        'name' => $request->name,
-        'phone' => $request->phone,
-        'message' => $request->message,
-        'quantity' => $request->quantity,
-        'payment_type' => $request->payment_type,
-    ]);
-
-    return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+    return redirect()->route('profile')->with('success', 'Car updated successfully!');
 }
 
-public function buySubmit(Request $request, $carId)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'required|string|max:255',
-        'quantity' => 'required|integer|min:1',
-        'payment_type' => 'required|in:cash,installments',
-        'message' => 'nullable|string',
-    ]);
-
-    PurchaseRequest::create([
-        'car_id' => $carId,
-        'name' => $validated['name'],
-        'phone' => $validated['phone'],
-        'quantity' => $validated['quantity'],
-        'payment_type' => $validated['payment_type'],
-        'message' => $validated['message'] ?? null,
-    ]);
-
-    return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
-}
 }
