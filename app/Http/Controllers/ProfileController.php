@@ -2,59 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\Car;
+use App\Models\PurchaseRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function index()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+        $carsSold = Car::where('user_id', $user->id)->get(); // العربيات اللي باعها
+        $carsBought = PurchaseRequest::with('car')
+            ->where('user_id', $user->id) // العربيات اللي اشتراها
+            ->get();
+
+        return view('profile.index', compact('carsSold', 'carsBought'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function destroyCar(Car $car)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($car->user_id === Auth::id()) {
+            $car->delete();
+            return back()->with('success', 'Car deleted successfully');
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return back()->with('error', 'Not authorized');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function destroyPurchase(PurchaseRequest $purchase)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        if ($purchase->user_id === Auth::id()) {
+            $purchase->delete();
+            return back()->with('success', 'Purchase request deleted successfully');
+        }
+        return back()->with('error', 'Not authorized');
     }
 }

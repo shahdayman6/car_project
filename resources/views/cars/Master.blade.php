@@ -121,32 +121,34 @@
     <!-- Dropdown Items -->
     <ul x-show="open" x-transition class="mt-2 space-y-2">
         <li>
-            <a href="{{ Auth::check() ? route('login') : route('login') }}"
-               class="flex items-center justify-between px-5 py-3 
-                      bg-gradient-to-r from-gray-800 to-gray-900
-                      hover:from-purple-700 hover:to-pink-600
-                      rounded-xl transition-all duration-300 
-                      shadow-md hover:shadow-purple-500/40">
-                <div class="flex items-center gap-4">
-                    <i class="fas fa-shopping-cart text-lg"></i>
-                    <span>Buy Spare Parts</span>
-                </div>
-                <i class="fas fa-arrow-right text-sm"></i>
-            </a>
+           <a href="{{ Auth::check() ? url('/spare-parts/buy') : route('login') }}"
+              class="flex items-center justify-between px-5 py-3 
+                 bg-gradient-to-r from-gray-800 to-gray-900
+                 hover:from-purple-700 hover:to-pink-600
+                 rounded-xl transition-all duration-300 
+                 shadow-md hover:shadow-purple-500/40">
+             <div class="flex items-center gap-4">
+               <i class="fas fa-shopping-cart text-lg"></i>
+               <span>Buy Spare Parts</span>
+             </div>
+               <i class="fas fa-arrow-right text-sm"></i>
+           </a>
+
         </li>
         <li>
-            <a href="{{ Auth::check() ? route('login') : route('login') }}"
-               class="flex items-center justify-between px-5 py-3 
-                      bg-gradient-to-r from-gray-800 to-gray-900
-                      hover:from-purple-700 hover:to-pink-600
-                      rounded-xl transition-all duration-300 
-                      shadow-md hover:shadow-purple-500/40">
-                <div class="flex items-center gap-4">
+           <a href="{{ Auth::check() ? route('spare-parts.create') : route('login', ['redirect' => 'spare-parts.create']) }}"
+             class="flex items-center justify-between px-5 py-3 
+               bg-gradient-to-r from-gray-800 to-gray-900
+              hover:from-purple-700 hover:to-pink-600
+              rounded-xl transition-all duration-300 
+              shadow-md hover:shadow-purple-500/40">
+                  <div class="flex items-center gap-4">
                     <i class="fas fa-tags text-lg"></i>
-                    <span>Sell Spare Parts</span>
-                </div>
-                <i class="fas fa-arrow-right text-sm"></i>
-            </a>
+                      <span>Sell Spare Parts</span>
+                  </div>
+              <i class="fas fa-arrow-right text-sm"></i>
+                   </a>
+
         </li>
     </ul>
 </li>
@@ -188,15 +190,18 @@
                         {{ Auth::user()->name }}
                     </span>
                 </div>
-
-                <div x-show="open" x-transition class="absolute right-0 mt-4 w-36 bg-gray-800 text-white rounded-xl shadow-2xl z-50 p-2">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="w-full text-left px-4 py-2 hover:bg-red-600 hover:text-white rounded-md transition font-semibold">
-                            🚪 Logout
-                        </button>
-                    </form>
-                </div>
+                 <div x-show="open" x-transition class="absolute right-0 mt-4 w-36 bg-gray-800 text-white rounded-xl shadow-2xl z-50 p-2">
+    <a href="{{ route('profile') }}" class="block w-full text-left px-4 py-2 hover:bg-blue-600 hover:text-white rounded-md transition font-semibold">
+        👤 My Profile
+    </a>
+    
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="w-full text-left px-4 py-2 hover:bg-red-600 hover:text-white rounded-md transition font-semibold">
+            🚪 Logout
+        </button>
+    </form>
+</div>
             @else
                 <div class="flex gap-2">
                     <a href="{{ route('login') }}" class="bg-blue-700 text-white px-5 py-2 rounded-full text-lg hover:bg-blue-900 transition duration-300 shadow-md">Login</a>
