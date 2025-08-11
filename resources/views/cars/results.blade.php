@@ -18,40 +18,40 @@
                 $imageUrl = "https://loremflickr.com/600/400/" . urlencode($car['make'] . '-' . $car['model']) . ",car";
             @endphp
 
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1">
-                <img src="{{ $imageUrl }}" class="w-full h-56 object-cover"
+            <div class="flex flex-col gap-3 p-4 border border-gray-600 rounded-lg bg-gray-900/30">
+                <img src="{{ $imageUrl }}" class="w-full h-56 object-cover rounded-lg"
                      onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Image+Unavailable';">
-                <div class="p-5">
-                    <h5 class="text-xl font-semibold mb-4 text-purple-700">
-                        {{ $car['make'] }} {{ $car['model'] }} ({{ $car['year'] ?? 'Unknown' }})
-                    </h5>
-                    <div class="flex flex-wrap gap-3 text-sm">
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                            <strong>Fuel:</strong> {{ $car['fuel_type'] ?? 'N/A' }}
-                        </span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                            <strong>Cylinders:</strong> {{ $car['cylinders'] ?? 'N/A' }}
-                        </span>
+                
+                <h5 class="text-xl font-semibold mb-2 text-purple-300">
+                    {{ $car['make'] }} {{ $car['model'] }} ({{ $car['year'] ?? 'Unknown' }})
+                </h5>
 
-                        @if (!str_contains($car['city_mpg'] ?? '', 'premium'))
-                            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                                <strong>MPG (City/Highway):</strong> {{ $car['city_mpg'] }} / {{ $car['highway_mpg'] ?? '-' }}
-                            </span>
-                        @endif
+                <div class="flex flex-wrap gap-2 text-sm text-gray-200">
+                    <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                        <strong>Fuel:</strong> {{ $car['fuel_type'] ?? 'N/A' }}
+                    </span>
+                    <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                        <strong>Cylinders:</strong> {{ $car['cylinders'] ?? 'N/A' }}
+                    </span>
 
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                            <strong>Displacement:</strong> {{ $car['displacement'] ?? '-' }}L
+                    @if (!str_contains($car['city_mpg'] ?? '', 'premium'))
+                        <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                            <strong>MPG (City/Highway):</strong> {{ $car['city_mpg'] }} / {{ $car['highway_mpg'] ?? '-' }}
                         </span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                            <strong>Class:</strong> {{ $car['class'] ?? 'N/A' }}
-                        </span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                            <strong>Drive:</strong> {{ $car['drive'] ?? 'N/A' }}
-                        </span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full shadow-sm">
-                            <strong>Transmission:</strong> {{ $car['transmission'] ?? 'N/A' }}
-                        </span>
-                    </div>
+                    @endif
+
+                    <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                        <strong>Displacement:</strong> {{ $car['displacement'] ?? '-' }}L
+                    </span>
+                    <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                        <strong>Class:</strong> {{ $car['class'] ?? 'N/A' }}
+                    </span>
+                    <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                        <strong>Drive:</strong> {{ $car['drive'] ?? 'N/A' }}
+                    </span>
+                    <span class="bg-purple-700 bg-opacity-40 px-3 py-1 rounded-full">
+                        <strong>Transmission:</strong> {{ $car['transmission'] ?? 'N/A' }}
+                    </span>
                 </div>
             </div>
         @endforeach
