@@ -121,32 +121,34 @@
     <!-- Dropdown Items -->
     <ul x-show="open" x-transition class="mt-2 space-y-2">
         <li>
-            <a href="{{ Auth::check() ? route('login') : route('login') }}"
-               class="flex items-center justify-between px-5 py-3 
-                      bg-gradient-to-r from-gray-800 to-gray-900
-                      hover:from-purple-700 hover:to-pink-600
-                      rounded-xl transition-all duration-300 
-                      shadow-md hover:shadow-purple-500/40">
-                <div class="flex items-center gap-4">
-                    <i class="fas fa-shopping-cart text-lg"></i>
-                    <span>Buy Spare Parts</span>
-                </div>
-                <i class="fas fa-arrow-right text-sm"></i>
-            </a>
+           <a href="{{ Auth::check() ? url('/spare-parts/buy') : route('login') }}"
+              class="flex items-center justify-between px-5 py-3 
+                 bg-gradient-to-r from-gray-800 to-gray-900
+                 hover:from-purple-700 hover:to-pink-600
+                 rounded-xl transition-all duration-300 
+                 shadow-md hover:shadow-purple-500/40">
+             <div class="flex items-center gap-4">
+               <i class="fas fa-shopping-cart text-lg"></i>
+               <span>Buy Spare Parts</span>
+             </div>
+               <i class="fas fa-arrow-right text-sm"></i>
+           </a>
+
         </li>
         <li>
-            <a href="{{ Auth::check() ? route('login') : route('login') }}"
-               class="flex items-center justify-between px-5 py-3 
-                      bg-gradient-to-r from-gray-800 to-gray-900
-                      hover:from-purple-700 hover:to-pink-600
-                      rounded-xl transition-all duration-300 
-                      shadow-md hover:shadow-purple-500/40">
-                <div class="flex items-center gap-4">
+           <a href="{{ Auth::check() ? route('spare-parts.create') : route('login', ['redirect' => 'spare-parts.create']) }}"
+             class="flex items-center justify-between px-5 py-3 
+               bg-gradient-to-r from-gray-800 to-gray-900
+              hover:from-purple-700 hover:to-pink-600
+              rounded-xl transition-all duration-300 
+              shadow-md hover:shadow-purple-500/40">
+                  <div class="flex items-center gap-4">
                     <i class="fas fa-tags text-lg"></i>
-                    <span>Sell Spare Parts</span>
-                </div>
-                <i class="fas fa-arrow-right text-sm"></i>
-            </a>
+                      <span>Sell Spare Parts</span>
+                  </div>
+              <i class="fas fa-arrow-right text-sm"></i>
+                   </a>
+
         </li>
     </ul>
 </li>

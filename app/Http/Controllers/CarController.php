@@ -140,7 +140,7 @@ class CarController extends Controller
 
     return view('cars.edit', compact('car'));
 }
-
+ 
 public function update(Request $request, Car $car)
 {
     if ($car->user_id !== auth()->id()) {

@@ -4,6 +4,7 @@ use App\Http\Controllers\CarController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarRequestController;
+use App\Http\Controllers\SparePartController;
 use App\Models\Car;
 
 // بيع سيارة → لازم تسجيل دخول
@@ -49,6 +50,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/cars/{car}/edit', [CarController::class, 'edit'])->name('cars.edit');
     Route::put('/cars/{car}', [CarController::class, 'update'])->name('cars.update');
+    Route::get('/spare-parts/create', [SparePartController::class, 'create'])->name('spare-parts.create');
+    Route::post('/spare-parts', [SparePartController::class, 'store'])->name('spare-parts.store');
+     // صفحة عرض قطع الغيار للشراء
+    Route::get('/spare-parts/buy', [SparePartController::class, 'buyList'])->name('spare-parts.buy');
+    // عملية شراء القطعة (هنعملها لاحقاً)
+    Route::post('/spare-parts/buy/{id}', [SparePartController::class, 'buy'])->name('spare-parts.buyNow');
+
 });
 
 
