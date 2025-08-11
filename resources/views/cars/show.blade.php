@@ -51,14 +51,27 @@
 
 
     {{-- صور السيارة --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
-        @foreach($car->images as $image)
-            <div class="overflow-hidden rounded-2xl shadow-lg transform hover:scale-105 hover:shadow-2xl transition-all duration-500 border border-gray-800">
-                <img src="{{ asset('images/cars/' . $image) }}" alt="Car Image"
-                     class="w-full h-64 object-cover rounded-2xl" />
-            </div>
-        @endforeach
-    </div>
+   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
+    @foreach($car->images as $image)
+        @php
+            // مسار الصورة لو في مجلد images/cars/
+            $imageFromImages = 'images/cars/' . $image;
+            // لو الاسم فيه مسار كامل (مثلاً من storage أو مكان تاني)
+            $imageFromStorage = $image;
+
+            // تحقق من وجود الصورة في مجلد images/cars/
+            $pathInImages = public_path($imageFromImages);
+            $pathInStorage = public_path($imageFromStorage);
+
+            // اختر الصورة الموجودة فعلاً
+            $finalImagePath = file_exists($pathInImages) ? asset($imageFromImages) : asset($imageFromStorage);
+        @endphp
+
+        <div class="overflow-hidden rounded-2xl shadow-lg transform hover:scale-105 hover:shadow-2xl transition-all duration-500 border border-gray-800">
+            <img src="{{ $finalImagePath }}" alt="Car Image" class="w-full h-64 object-cover rounded-2xl" />
+        </div>
+    @endforeach
+</div>
 
     {{-- معلومات السيارة --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 text-lg">

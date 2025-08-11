@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
         @foreach ($data as $car)
             @php
                 $imageUrl = "https://loremflickr.com/600/400/" . urlencode($car['make'] . '-' . $car['model']) . ",car";
@@ -55,6 +55,13 @@
                 </div>
             </div>
         @endforeach
+    </div>
+
+    <div class="flex justify-center mt-10">
+       <a href="{{ route('cars.buy', $data[0]['id'] ?? 1) }}"
+           class="px-6 py-3 bg-purple-600 hover:bg-purple-800 text-white rounded-full text-lg font-semibold transition">
+           Go to Buy Page
+        </a>
     </div>
 </div>
 
