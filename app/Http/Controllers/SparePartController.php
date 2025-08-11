@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use App\Models\PurchaseRequest;
 use App\Models\SparePart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Purchase; // لو عامل موديل للمشتريات
-use Illuminate\Support\Facades\Storage;
 
 class SparePartController extends Controller
 {
-    // إن شاء الله ستضيفي middleware('auth') على الراوت لو رغبتِ
-
     public function create()
     {
         return view('spare_parts.create_sell');
@@ -25,22 +23,19 @@ class SparePartController extends Controller
             'price' => 'nullable|numeric|min:0',
             'condition' => 'required|in:new,used',
             'quantity' => 'required|integer|min:1',
-            'images.*' => 'nullable|image|max:5120', // max 5MB each
+            'images.*' => 'nullable|image|max:5120',
         ]);
 
-     $imagesArray = [];
-if ($request->hasFile('images')) {
-    foreach ($request->file('images') as $image) {
-        $filename = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
-        // الحفظ مباشرة داخل public/images/spare_parts
-        $image->move(public_path('images/spare_parts'), $filename);
-        // نخزن المسار النسبي لعرضه بسهولة
-        $imagesArray[] = 'images/spare_parts/' . $filename;
-    }
-}
+        $imagesArray = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $filename = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('images/spare_parts'), $filename);
+                $imagesArray[] = 'images/spare_parts/' . $filename;
+            }
+        }
 
-
-        $spare = SparePart::create([
+        SparePart::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'price' => $validated['price'] ?? null,
@@ -50,74 +45,68 @@ if ($request->hasFile('images')) {
             'user_id' => auth()->id() ?? null,
         ]);
 
-        return redirect()->route('spare-parts.create')->with('success', 'The piece has uploaded succes' );
+        return redirect()->route('spare-parts.create')->with('success', 'The piece has been uploaded successfully.');
     }
 
-    // عرض صفحة شراء قطع الغيار
-public function buyList(Request $request)
-{
-    // البحث
-    $search = $request->input('search');
+    public function buyList(Request $request)
+    {
+        $search = $request->input('search');
 
-    $spareParts = SparePart::when($search, function($query) use ($search) {
-        $query->where('name', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%");
-    })->get();
+        $spareParts = SparePart::when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->where('quantity', '>', 0)
+            ->get();
 
-    return view('spare_parts.buy_list', compact('spareParts', 'search'));
-}
-
-// عملية شراء القطعة (Placeholder)
-public function buy($id)
-{
-    $sparePart = SparePart::findOrFail($id);
-
-    // هنا تقدر تعمل منطق الشراء (خصم الكمية، تسجيل العملية... إلخ)
-    if ($sparePart->quantity > 0) {
-        $sparePart->quantity -= 1;
-        $sparePart->save();
-
-        return redirect()->back()->with('success', 'You bought the spare part successfully!');
+        return view('spare_parts.buy_list', compact('spareParts', 'search'));
     }
 
-    return redirect()->back()->with('error', 'Sorry, this spare part is out of stock.');
-}
-public function purchase($id)
-{
-    $part = SparePart::findOrFail($id);
-    return view('spare_parts.purchase', compact('part'));
-}
+    public function purchase($id)
+    {
+        $part = SparePart::findOrFail($id);
+        return view('spare_parts.purchase', compact('part'));
+    }
 
-public function processPurchase(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'required|string|max:20',
-        'address' => 'required|string',
-        'quantity' => 'required|integer|min:1',
+    public function processPurchase(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $part = SparePart::findOrFail($id);
+        $qtyToBuy = (int) $request->input('quantity');
+
+        if ($part->quantity < $qtyToBuy) {
+            return redirect()->route('spare-parts.purchase', $id)
+                             ->with('error', 'Not enough stock available.');
+        }
+
+        // خصم الكمية أو حذف القطعة لو وصلت صفر
+        $part->quantity -= $qtyToBuy;
+        if ($part->quantity <= 0) {
+            $part->delete();
+        } else {
+            $part->save();
+        }
+
+        // حفظ بيانات الطلب في purchase_requests
+     $productType = $part instanceof SparePart ? 'spare_part' : 'car';
+
+    PurchaseRequest::create([
+    'product_id' => $part->id,
+    'product_type' => $productType,
+    'user_id' => auth()->id(),
+    'name' => $request->name,
+    'phone' => $request->phone,
+    'quantity' => $request->quantity,
+    'message' => $request->address, // استخدمي address هنا بدل message لو عايزة تحفظ العنوان
     ]);
 
-    $part = SparePart::findOrFail($id);
 
-    $qtyToBuy = (int) $request->input('quantity');
-
-    if ($part->quantity < $qtyToBuy) {
-        return redirect()->route('spare-parts.purchase', $id)->with('error', 'Not enough stock available.');
+        return redirect()->route('spare-parts.buy')->with('success', 'Purchase successful!');
     }
-
-    // خصم الكمية
-    $part->quantity -= $qtyToBuy;
-    $part->save();
-
-    // حفظ بيانات الطلب
-    Purchase::create([
-        'spare_part_id' => $id,
-        'user_name' => $request->input('name'),
-        'user_phone' => $request->input('phone'),
-        'shipping_address' => $request->input('address'),
-        'quantity' => $qtyToBuy,
-    ]);
-
-    return redirect()->route('spare-parts.buy')->with('success', 'Purchase successful!');
-}
 }

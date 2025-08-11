@@ -14,18 +14,23 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // العربيات
+        // السيارات التي قام بنشرها بواسطته (بيع)
         $carsSold = Car::where('user_id', $user->id)->get();
+
+        // مشتريات السيارات (من جدول purchase_requests) — نفلتر على product_type = 'car'
         $carsBought = PurchaseRequest::with('car')
             ->where('user_id', $user->id)
+            ->where('product_type', 'car')
             ->get();
 
-        // قطع الغيار اللي باعها
+        // قطع الغيار التي قام بنشرها بواسطته (بيع)
         $sparePartsSold = SparePart::where('user_id', $user->id)->get();
 
-        // قطع الغيار اللي اشتراها (لو عندك جدول مشتريات قطع غيار)
-        // هنا افتراض إنك هتعملي جدول جديد اسمه spare_part_purchases
-        $sparePartsBought = []; // حطيه فاضي مؤقتاً أو اربطيه بالموديل الجديد لو عملتيه
+        // مشتريات قطع الغيار — من جدول purchase_requests مع فلترة product_type = 'spare_part'
+        $sparePartsBought = PurchaseRequest::with('sparePart')
+            ->where('user_id', $user->id)
+            ->where('product_type', 'spare_part')
+            ->get();
 
         return view('profile.index', compact(
             'carsSold',
@@ -61,5 +66,5 @@ class ProfileController extends Controller
         }
         return back()->with('error', 'Not authorized');
     }
-
 }
+
