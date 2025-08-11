@@ -16,5 +16,11 @@ class Car extends Model
         'images' => 'array',
     ];
 
+    public function purchaseRequests()
+{
+    return $this->morphMany(PurchaseRequest::class, 'product');
+}
+
+
     
 }

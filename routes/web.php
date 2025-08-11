@@ -46,7 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::delete('/cars/{car}', [ProfileController::class, 'destroyCar'])->name('profile.cars.delete');
     Route::delete('/purchases/{purchase}', [ProfileController::class, 'destroyPurchase'])->name('profile.purchases.delete');
+    
+    // الحذف لقطع الغيار
+    Route::delete('/spare-parts/{sparePart}', [ProfileController::class, 'destroySparePart'])->name('profile.spare-parts.delete');
 });
+
+Route::get('/spare-parts/{id}/purchase', [SparePartController::class, 'purchase'])->name('spare-parts.purchase');
+Route::post('/spare-parts/{id}/purchase', [SparePartController::class, 'processPurchase'])->name('spare-parts.processPurchase');
+
 Route::middleware('auth')->group(function () {
     Route::get('/cars/{car}/edit', [CarController::class, 'edit'])->name('cars.edit');
     Route::put('/cars/{car}', [CarController::class, 'update'])->name('cars.update');

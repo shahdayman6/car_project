@@ -12,12 +12,13 @@ class CarController extends Controller
     {
         $cars = Car::all();
 
-        foreach ($cars as $car) {
+        $cars->transform(function ($car) {
             if (is_string($car->images)) {
                 $car->images = json_decode($car->images);
             }
             $car->name = $car->brand . ' ' . $car->model;
-        }
+            return $car;
+        });
 
         $carsArray = $cars->map(function ($car) {
             return [
@@ -61,27 +62,31 @@ class CarController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'brand' => 'required',
-            'model' => 'required',
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
             'year' => 'required|integer',
             'price' => 'required|numeric',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:5120', // 5MB max
         ]);
 
-        $imagePaths = [];
+        $imagesArray = [];
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/cars', $filename);
-                $imagePaths[] = $filename;
+                $filename = \Illuminate\Support\Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('images/cars'), $filename);
+                $imagesArray[] = 'images/cars/' . $filename;
             }
         }
 
-        $validated['images'] = json_encode($imagePaths);
-        $validated['user_id'] = auth()->id(); // صاحب العربية
-
-        Car::create($validated);
+        Car::create([
+            'brand' => $validated['brand'],
+            'model' => $validated['model'],
+            'year' => $validated['year'],
+            'price' => $validated['price'],
+            'images' => $imagesArray,
+            'user_id' => auth()->id(),
+        ]);
 
         return redirect()->route('home')->with('success', 'Car added successfully!');
     }
@@ -97,7 +102,8 @@ class CarController extends Controller
         ]);
 
         PurchaseRequest::create([
-            'car_id' => $car->id,
+            'product_id' => $car->id,
+            'product_type' => 'car',
             'user_id' => auth()->id(), // المشتري
             'name' => $request->name,
             'phone' => $request->phone,
@@ -120,7 +126,8 @@ class CarController extends Controller
         ]);
 
         PurchaseRequest::create([
-            'car_id' => $carId,
+            'product_id' => $carId,
+            'product_type' => 'car',
             'user_id' => auth()->id(), // المشتري
             'name' => $validated['name'],
             'phone' => $validated['phone'],
@@ -131,47 +138,49 @@ class CarController extends Controller
 
         return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
     }
+
     public function edit(Car $car)
-{
-    // تحقق من أن صاحب السيارة هو المستخدم الحالي (اختياري)
-    if ($car->user_id !== auth()->id()) {
-        abort(403, 'Unauthorized action.');
-    }
-
-    return view('cars.edit', compact('car'));
-}
- 
-public function update(Request $request, Car $car)
-{
-    if ($car->user_id !== auth()->id()) {
-        abort(403, 'Unauthorized action.');
-    }
-
-    $validated = $request->validate([
-        'brand' => 'required',
-        'model' => 'required',
-        'year' => 'required|integer',
-        'price' => 'required|numeric',
-        'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-    ]);
-
-    $imagePaths = [];
-
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
-            $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/cars', $filename);
-            $imagePaths[] = $filename;
+    {
+        if ($car->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
         }
-        $validated['images'] = json_encode($imagePaths);
-    } else {
-        // لو ما رفعش صور جديدة، احتفظ بالصور القديمة
-        $validated['images'] = $car->images;
+
+        return view('cars.edit', compact('car'));
     }
 
-    $car->update($validated);
+    public function update(Request $request, Car $car)
+    {
+        if ($car->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
-    return redirect()->route('profile')->with('success', 'Car updated successfully!');
-}
+        $validated = $request->validate([
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'year' => 'required|integer',
+            'price' => 'required|numeric',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+        ]);
 
+        $imagesArray = $car->images; // الصور القديمة
+
+        if ($request->hasFile('images')) {
+            $imagesArray = [];
+            foreach ($request->file('images') as $image) {
+                $filename = \Illuminate\Support\Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('images/cars'), $filename);
+                $imagesArray[] = 'images/cars/' . $filename;
+            }
+        }
+
+        $car->update([
+            'brand' => $validated['brand'],
+            'model' => $validated['model'],
+            'year' => $validated['year'],
+            'price' => $validated['price'],
+            'images' => $imagesArray,
+        ]);
+
+        return redirect()->route('profile')->with('success', 'Car updated successfully!');
+    }
 }

@@ -232,7 +232,7 @@
                               @foreach ($car['images'] as $i => $image)
     @php
         $imageFromImages = 'images/cars/' . $image;
-        $imageFromStorage = 'storage/cars/' . $image;
+        $imageFromStorage = $image;
 
         $pathInImages = public_path($imageFromImages);
         $pathInStorage = public_path($imageFromStorage);

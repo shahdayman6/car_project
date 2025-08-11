@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\SparePart;
+use App\Models\PurchaseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -72,7 +73,43 @@ public function handleForm(Request $request)
         ]);
     }
 }
+public function processPurchase(Request $request, $id)
+{
+    $part = SparePart::findOrFail($id);
 
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'quantity' => 'required|integer|min:1|max:' . $part->quantity,
+        'payment_type' => 'nullable|in:cash,installments',
+        'message' => 'nullable|string|max:1000',
+        'budget_from' => 'nullable|integer|min:0',
+        'budget_to' => 'nullable|integer|min:0',
+    ]);
+
+    if ($part->quantity < $request->quantity) {
+        return redirect()->back()->with('error', 'Not enough quantity available.');
+    }
+
+    $part->quantity -= $request->quantity;
+    $part->save();
+
+    PurchaseRequest::create([
+        'product_id' => $part->id,
+        'product_type' => 'spare_part',
+        'user_id' => auth()->id(),
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'quantity' => $request->quantity,
+        'payment_type' => $request->payment_type ?? 'cash',
+        'message' => $request->message,
+        'budget_from' => $request->budget_from,
+        'budget_to' => $request->budget_to,
+    ]);
+
+   return redirect()->route('home')->with('success', 'Purchase successful!');
+
+}
 }
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SparePart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\Purchase; // لو عامل موديل للمشتريات
 use Illuminate\Support\Facades\Storage;
 
 class SparePartController extends Controller
@@ -81,5 +82,42 @@ public function buy($id)
 
     return redirect()->back()->with('error', 'Sorry, this spare part is out of stock.');
 }
+public function purchase($id)
+{
+    $part = SparePart::findOrFail($id);
+    return view('spare_parts.purchase', compact('part'));
+}
 
+public function processPurchase(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'address' => 'required|string',
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    $part = SparePart::findOrFail($id);
+
+    $qtyToBuy = (int) $request->input('quantity');
+
+    if ($part->quantity < $qtyToBuy) {
+        return redirect()->route('spare-parts.purchase', $id)->with('error', 'Not enough stock available.');
+    }
+
+    // خصم الكمية
+    $part->quantity -= $qtyToBuy;
+    $part->save();
+
+    // حفظ بيانات الطلب
+    Purchase::create([
+        'spare_part_id' => $id,
+        'user_name' => $request->input('name'),
+        'user_phone' => $request->input('phone'),
+        'shipping_address' => $request->input('address'),
+        'quantity' => $qtyToBuy,
+    ]);
+
+    return redirect()->route('spare-parts.buy')->with('success', 'Purchase successful!');
+}
 }

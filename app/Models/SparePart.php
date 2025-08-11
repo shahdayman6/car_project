@@ -22,4 +22,10 @@ class SparePart extends Model
     {
         return $this->belongsTo(User::class);
     }
+ 
+    public function purchaseRequests()
+{
+    return $this->morphMany(PurchaseRequest::class, 'product');
+}
+
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Models\PurchaseRequest;
+use App\Models\SparePart;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
@@ -12,12 +13,26 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $carsSold = Car::where('user_id', $user->id)->get(); // العربيات اللي باعها
+
+        // العربيات
+        $carsSold = Car::where('user_id', $user->id)->get();
         $carsBought = PurchaseRequest::with('car')
-            ->where('user_id', $user->id) // العربيات اللي اشتراها
+            ->where('user_id', $user->id)
             ->get();
 
-        return view('profile.index', compact('carsSold', 'carsBought'));
+        // قطع الغيار اللي باعها
+        $sparePartsSold = SparePart::where('user_id', $user->id)->get();
+
+        // قطع الغيار اللي اشتراها (لو عندك جدول مشتريات قطع غيار)
+        // هنا افتراض إنك هتعملي جدول جديد اسمه spare_part_purchases
+        $sparePartsBought = []; // حطيه فاضي مؤقتاً أو اربطيه بالموديل الجديد لو عملتيه
+
+        return view('profile.index', compact(
+            'carsSold',
+            'carsBought',
+            'sparePartsSold',
+            'sparePartsBought'
+        ));
     }
 
     public function destroyCar(Car $car)
@@ -37,4 +52,14 @@ class ProfileController extends Controller
         }
         return back()->with('error', 'Not authorized');
     }
+
+    public function destroySparePart(SparePart $sparePart)
+    {
+        if ($sparePart->user_id === Auth::id()) {
+            $sparePart->delete();
+            return back()->with('success', 'Spare part deleted successfully');
+        }
+        return back()->with('error', 'Not authorized');
+    }
+
 }
