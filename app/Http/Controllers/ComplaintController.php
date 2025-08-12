@@ -17,17 +17,14 @@ class ComplaintController extends Controller
     // حفظ الشكوى في قاعدة البيانات
     public function store(Request $request)
     {
-        // تحقق من تسجيل الدخول
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'You must be logged in to submit a complaint.');
         }
 
-        // التحقق من صحة البيانات
         $request->validate([
             'message' => 'required|string|max:2000',
         ]);
 
-        // حفظ الشكوى مع ربطها بالمستخدم الحالي
         Complaint::create([
             'user_id' => Auth::id(),
             'message' => $request->message,
@@ -38,11 +35,30 @@ class ComplaintController extends Controller
 
     // عرض كل الشكاوى (صفحة الادمن فقط)
     public function index()
-    {
-        // ممكن تضيف تحقق من صلاحية الادمن هنا
-        $complaints = Complaint::with('user')->latest()->paginate(20);
-        return view('complaints.index', compact('complaints'));
+{
+    // تحقق هل المستخدم مسجل دخول وهل هو أدمن
+    if (!auth()->check() || !auth()->user()->is_admin) {
+        return redirect()->route('complaints.create')->with('error', 'Access denied.');
     }
+
+    $complaints = Complaint::with('user')->latest()->paginate(20);
+    return view('complaints.index', compact('complaints'));
 }
 
 
+    // دالة توجيه حسب دور المستخدم (is_admin)
+    public function redirectBasedOnRole()
+    {
+        if (auth()->check()) {
+            if (auth()->user()->is_admin) {
+                // لو الادمن، اوديه لصفحة الشكاوى
+                return redirect()->route('complaints.index');
+            } else {
+                // لو مش ادمن، اوديه لصفحة المستخدم العادي (غيري الاسم حسب اللي عندك)
+                return redirect()->route('complaints.create');
+            }
+        }
+
+        return redirect()->route('login');
+    }
+}

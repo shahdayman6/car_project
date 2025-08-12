@@ -18,11 +18,13 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'image',
-    ];
+    'name',
+    'email',
+    'password',
+    'image',
+    'is_admin',
+];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,8 +46,9 @@ class User extends Authenticatable
     'password' => 'hashed',
     ];
     public function isAdmin()
-   {
-    return $this->is_admin;  // true أو false
-   }
+{
+    return $this->is_admin === 1;
+}
+
 
 }

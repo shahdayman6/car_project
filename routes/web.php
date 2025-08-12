@@ -7,6 +7,7 @@ use App\Http\Controllers\CarRequestController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\ChatController;
 use App\Models\Car;
 
 // بيع سيارة → لازم تسجيل دخول
@@ -82,9 +83,26 @@ Route::middleware('auth')->group(function () {
 
 
 // عرض الشكاوى للادمن فقط (محتاج تحققي صلاحية الادمن في الكنترولر أو ميدل وير)
-  Route::middleware(['auth', 'admin'])->group(function () {
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/redirect', [ComplaintController::class, 'redirectBasedOnRole'])->name('redirect');
+
+    // خلي صلاحية الدخول للصفحة دي لكل المستخدمين اللي سجلوا دخول فقط (مش شرط أدمن)
     Route::get('/admin/complaints', [ComplaintController::class, 'index'])->name('complaints.index');
+
+    Route::get('/home', function() {
+        return view('user.home');
+    })->name('user.home');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/chat/{receiver}', [ChatController::class, 'showChat'])->name('chat.show');
+    Route::post('/chat/{receiver}', [ChatController::class, 'sendMessage'])->name('chat.send');
+});
+
+
+
+
 
 // صفحة الماستر
 Route::get('/master', [CarController::class, 'masterPage'])->name('home');
