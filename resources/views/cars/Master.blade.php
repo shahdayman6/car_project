@@ -171,11 +171,13 @@
 
         <!-- Offers -->
         <li>
-            <a href="#" 
-               class="flex items-center gap-4 px-5 py-3 bg-gray-850 hover:bg-gradient-to-r hover:from-purple-700 hover:to-pink-600 rounded-xl transition-all duration-300 group shadow-md hover:shadow-purple-500/30">
+            <li>
+            <a href="{{ route('complaints.index') }}" 
+              class="flex items-center gap-4 px-5 py-3 bg-gray-850 hover:bg-gradient-to-r hover:from-purple-700 hover:to-pink-600 rounded-xl transition-all duration-300 group shadow-md hover:shadow-purple-500/30">
                 <i class="fas fa-tags text-xl group-hover:scale-110 transition-transform"></i>
-                <span class="group-hover:tracking-wider transition-all duration-300">Offers</span>
+                <span class="group-hover:tracking-wider transition-all duration-300">Complaints</span>
             </a>
+            </li>
         </li>
     </ul>
 </aside>

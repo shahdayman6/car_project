@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarRequestController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\RentalController;
+use App\Http\Controllers\ComplaintController;
 use App\Models\Car;
 
 // بيع سيارة → لازم تسجيل دخول
@@ -75,8 +76,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/rentals/{rental}/book', [RentalController::class, 'book'])->name('rentals.book');  
     Route::delete('/profile/rentals/{id}', [App\Http\Controllers\ProfileController::class, 'destroyRentalRequest'])->name('profile.rentals.delete');
 
+    Route::get('/complaints', [ComplaintController::class, 'create'])->name('complaints.create');
+    Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
 });
 
+
+// عرض الشكاوى للادمن فقط (محتاج تحققي صلاحية الادمن في الكنترولر أو ميدل وير)
+  Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/complaints', [ComplaintController::class, 'index'])->name('complaints.index');
+});
 
 // صفحة الماستر
 Route::get('/master', [CarController::class, 'masterPage'])->name('home');
