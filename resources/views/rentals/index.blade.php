@@ -27,7 +27,7 @@
                     <button onclick="nextImage({{ $index }})" class="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-purple-700 bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">›</button>
                 </div>
                 <div class="p-4">
-                    <h2 class="text-xl font-bold text-purple-400 mb-2">{{ $rental['name'] }}</h2>
+                    <h2 class="text-xl font-bold text-purple-400 mb-2">{{ $rental['title'] }}</h2>
                     <p class="text-gray-300 mb-4">${{ $rental['price_per_day'] }} / day</p>
                     <p class="text-gray-400 mb-2">Location: {{ $rental['location'] ?? 'N/A' }}</p>
                     <a href="{{ route('rentals.showBookingForm', $rental->id) }}" 
