@@ -82,6 +82,47 @@
         </div>
     </section>
 
+     {{-- My Rental Bookings --}}
+
+    <section class="mt-12">
+    <h3 class="text-3xl font-semibold mb-6 text-purple-300">My Rental Bookings</h3>
+    <div class="overflow-x-auto rounded-xl border border-purple-500/50 shadow-lg">
+        <table class="min-w-full divide-y divide-purple-700">
+            <thead class="bg-gradient-to-r from-purple-800 to-pink-800 text-white">
+                <tr>
+                    @foreach (['Rental', 'From', 'To', 'Total Price', 'Status', 'Actions'] as $header)
+                        <th scope="col" class="px-6 py-3 text-left text-sm font-semibold tracking-wide">{{ $header }}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-purple-700 bg-gray-900/60">
+                @forelse($rentalRequests as $request)
+                    <tr class="hover:bg-purple-800/50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $request->rental->title ?? 'N/A' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $request->start_date }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $request->end_date }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${{ number_format($request->total_price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">Pending</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <form action="{{ route('profile.rentals.delete', $request->id) }}" method="POST" onsubmit="return confirm('Are you sure?')" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="px-3 py-1 bg-red-600 rounded-lg font-semibold hover:bg-red-700 transition">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-400 italic">No bookings yet.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+
     {{-- Spare Parts I Sold --}}
     <section class="mt-16">
         <h3 class="text-3xl font-semibold mb-6 text-purple-300">Spare Parts I Sold</h3>

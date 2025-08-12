@@ -7,38 +7,39 @@ use App\Models\Car;
 use App\Models\PurchaseRequest;
 use App\Models\SparePart;
 use Illuminate\Support\Facades\Auth;
+use App\Models\RentalRequest;
 
 class ProfileController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
+   public function index()
+{
+    $user = Auth::user();
 
-        // السيارات التي قام بنشرها بواسطته (بيع)
-        $carsSold = Car::where('user_id', $user->id)->get();
+    $carsSold = Car::where('user_id', $user->id)->get();
 
-        // مشتريات السيارات (من جدول purchase_requests) — نفلتر على product_type = 'car'
-        $carsBought = PurchaseRequest::with('car')
-            ->where('user_id', $user->id)
-            ->where('product_type', 'car')
-            ->get();
+    $carsBought = PurchaseRequest::with('car')
+        ->where('user_id', $user->id)
+        ->where('product_type', 'car')
+        ->get();
 
-        // قطع الغيار التي قام بنشرها بواسطته (بيع)
-        $sparePartsSold = SparePart::where('user_id', $user->id)->get();
+    $sparePartsSold = SparePart::where('user_id', $user->id)->get();
 
-        // مشتريات قطع الغيار — من جدول purchase_requests مع فلترة product_type = 'spare_part'
-        $sparePartsBought = PurchaseRequest::with('sparePart')
-            ->where('user_id', $user->id)
-            ->where('product_type', 'spare_part')
-            ->get();
+    $sparePartsBought = PurchaseRequest::with('sparePart')
+        ->where('user_id', $user->id)
+        ->where('product_type', 'spare_part')
+        ->get();
 
-        return view('profile.index', compact(
-            'carsSold',
-            'carsBought',
-            'sparePartsSold',
-            'sparePartsBought'
-        ));
-    }
+    $rentalRequests = RentalRequest::with('rental')->where('user_id', $user->id)->get();
+
+    return view('profile.index', compact(
+        'carsSold',
+        'carsBought',
+        'sparePartsSold',
+        'sparePartsBought',
+        'rentalRequests'
+    ));
+}
+
 
     public function destroyCar(Car $car)
     {
@@ -65,6 +66,15 @@ class ProfileController extends Controller
             return back()->with('success', 'Spare part deleted successfully');
         }
         return back()->with('error', 'Not authorized');
-    }
+    } 
+
+    public function destroyRentalRequest($id)
+{
+    $request = RentalRequest::where('user_id', auth()->id())->findOrFail($id);
+    $request->delete();
+
+    return redirect()->route('profile')->with('success', 'Rental request deleted successfully.');
+}
+
 }
 

@@ -22,5 +22,7 @@ public function run(): void
 
     $this->call(CarSeeder::class);
     $this->call(SparePartsSeeder::class);
+    $this->call(RentalSeeder::class);
+
 }
 }

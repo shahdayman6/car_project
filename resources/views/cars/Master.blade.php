@@ -100,6 +100,21 @@
     </ul>
 </li>
 
+
+<a href="{{ Auth::check() ? route('rentals.index') : route('login') }}"
+   class="flex items-center justify-between px-5 py-3 
+          bg-gradient-to-r from-gray-800 to-gray-900
+          hover:from-indigo-700 hover:to-purple-600
+          rounded-xl transition-all duration-300 
+          shadow-md hover:shadow-indigo-500/40">
+    <div class="flex items-center gap-4">
+        <i class="fas fa-car-side text-lg"></i>
+        <span>Rent Cars</span>
+    </div>
+    <i class="fas fa-arrow-right text-sm"></i>
+</a>
+
+
         <!-- Spare Parts Dropdown -->
 <li x-data="{ open: false }">
     <!-- Main Button -->

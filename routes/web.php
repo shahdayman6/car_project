@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarRequestController;
 use App\Http\Controllers\SparePartController;
+use App\Http\Controllers\RentalController;
 use App\Models\Car;
 
 // بيع سيارة → لازم تسجيل دخول
@@ -46,7 +47,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::delete('/cars/{car}', [ProfileController::class, 'destroyCar'])->name('profile.cars.delete');
     Route::delete('/purchases/{purchase}', [ProfileController::class, 'destroyPurchase'])->name('profile.purchases.delete');
-    
     // الحذف لقطع الغيار
     Route::delete('/spare-parts/{sparePart}', [ProfileController::class, 'destroySparePart'])->name('profile.spare-parts.delete');
 });
@@ -63,6 +63,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/spare-parts/buy', [SparePartController::class, 'buyList'])->name('spare-parts.buy');
     // عملية شراء القطعة (هنعملها لاحقاً)
     Route::post('/spare-parts/buy/{id}', [SparePartController::class, 'buy'])->name('spare-parts.buyNow');
+  
+    Route::get('/rentals', [RentalController::class, 'index'])
+    ->name('rentals.index')
+    ->middleware('auth');
+    Route::post('/rentals/{rental}/book', [RentalController::class, 'book'])->name('rentals.book');
+    Route::get('/rentals/search', [RentalController::class, 'search']);
+     // صفحة عرض الفورم للحجز
+    Route::get('/rentals/{rental}/book', [RentalController::class, 'showBookingForm'])->name('rentals.showBookingForm');
+    // مسار معالجة الحجز POST (موجود عندك)
+    Route::post('/rentals/{rental}/book', [RentalController::class, 'book'])->name('rentals.book');  
+    Route::delete('/profile/rentals/{id}', [App\Http\Controllers\ProfileController::class, 'destroyRentalRequest'])->name('profile.rentals.delete');
 
 });
 
