@@ -7,33 +7,39 @@ use App\Models\Car;
 use App\Models\PurchaseRequest;
 use App\Models\SparePart;
 use Illuminate\Support\Facades\Auth;
+use App\Models\RentalRequest;
 
 class ProfileController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
+   public function index()
+{
+    $user = Auth::user();
 
-        // العربيات
-        $carsSold = Car::where('user_id', $user->id)->get();
-        $carsBought = PurchaseRequest::with('car')
-            ->where('user_id', $user->id)
-            ->get();
+    $carsSold = Car::where('user_id', $user->id)->get();
 
-        // قطع الغيار اللي باعها
-        $sparePartsSold = SparePart::where('user_id', $user->id)->get();
+    $carsBought = PurchaseRequest::with('car')
+        ->where('user_id', $user->id)
+        ->where('product_type', 'car')
+        ->get();
 
-        // قطع الغيار اللي اشتراها (لو عندك جدول مشتريات قطع غيار)
-        // هنا افتراض إنك هتعملي جدول جديد اسمه spare_part_purchases
-        $sparePartsBought = []; // حطيه فاضي مؤقتاً أو اربطيه بالموديل الجديد لو عملتيه
+    $sparePartsSold = SparePart::where('user_id', $user->id)->get();
 
-        return view('profile.index', compact(
-            'carsSold',
-            'carsBought',
-            'sparePartsSold',
-            'sparePartsBought'
-        ));
-    }
+    $sparePartsBought = PurchaseRequest::with('sparePart')
+        ->where('user_id', $user->id)
+        ->where('product_type', 'spare_part')
+        ->get();
+
+    $rentalRequests = RentalRequest::with('rental')->where('user_id', $user->id)->get();
+
+    return view('profile.index', compact(
+        'carsSold',
+        'carsBought',
+        'sparePartsSold',
+        'sparePartsBought',
+        'rentalRequests'
+    ));
+}
+
 
     public function destroyCar(Car $car)
     {
@@ -60,6 +66,15 @@ class ProfileController extends Controller
             return back()->with('success', 'Spare part deleted successfully');
         }
         return back()->with('error', 'Not authorized');
-    }
+    } 
+
+    public function destroyRentalRequest($id)
+{
+    $request = RentalRequest::where('user_id', auth()->id())->findOrFail($id);
+    $request->delete();
+
+    return redirect()->route('profile')->with('success', 'Rental request deleted successfully.');
+}
 
 }
+
