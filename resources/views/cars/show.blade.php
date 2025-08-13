@@ -90,6 +90,12 @@
             <p class="text-gray-400 text-sm uppercase tracking-wide mb-2">Description</p>
             <p class="leading-relaxed">{{ $car->description }}</p>
         </div>
+
+        <div class="glass-card p-6">
+           <p class="text-gray-400 text-sm uppercase tracking-wide mb-2">Available</p>
+           <p class="leading-relaxed">{{ $car->stock }} cars</p>
+        </div>
+
     </div>
 
     {{-- زر الشراء --}}

@@ -57,7 +57,7 @@ class CarController extends Controller
     public function create()
     {
         return view('cars.sellcar');
-    }
+    } 
 
     public function store(Request $request)
     {
@@ -92,52 +92,71 @@ class CarController extends Controller
     }
 
     public function submitBuy(Request $request, Car $car)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'message' => 'nullable|string',
-            'quantity' => 'required|integer|min:1',
-            'payment_type' => 'required|in:cash,installments',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'message' => 'nullable|string',
+        'quantity' => 'required|integer|min:1',
+        'payment_type' => 'required|in:cash,installments',
+    ]);
 
-        PurchaseRequest::create([
-            'product_id' => $car->id,
-            'product_type' => 'car',
-            'user_id' => auth()->id(), // المشتري
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'message' => $request->message,
-            'quantity' => $request->quantity,
-            'payment_type' => $request->payment_type,
-        ]);
-
-        return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+    if ($request->quantity > $car->quantity) {
+        return redirect()->back()->with('error', 'Not enough cars in stock.');
     }
 
-    public function buySubmit(Request $request, $carId)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'quantity' => 'required|integer|min:1',
-            'payment_type' => 'required|in:cash,installments',
-            'message' => 'nullable|string',
-        ]);
+    PurchaseRequest::create([
+        'product_id' => $car->id,
+        'product_type' => 'car',
+        'user_id' => auth()->id(),
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'message' => $request->message,
+        'quantity' => $request->quantity,
+        'payment_type' => $request->payment_type,
+    ]);
 
-        PurchaseRequest::create([
-            'product_id' => $carId,
-            'product_type' => 'car',
-            'user_id' => auth()->id(), // المشتري
-            'name' => $validated['name'],
-            'phone' => $validated['phone'],
-            'quantity' => $validated['quantity'],
-            'payment_type' => $validated['payment_type'],
-            'message' => $validated['message'] ?? null,
-        ]);
+    $car->quantity -= $request->quantity;
+    $car->save();
 
-        return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+    return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+}
+
+ public function buySubmit(Request $request, $carId)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:255',
+        'quantity' => 'required|integer|min:1',
+        'payment_type' => 'required|in:cash,installments',
+        'message' => 'nullable|string',
+    ]);
+
+    $car = Car::findOrFail($carId);
+
+    // التحقق أن الكمية المطلوبة أقل أو تساوي المتاحة
+    if ($validated['quantity'] > $car->quantity) {
+        return redirect()->back()->with('error', 'Not enough cars in stock.');
     }
+
+    // إنشاء طلب الشراء
+    PurchaseRequest::create([
+        'product_id' => $carId,
+        'product_type' => 'car',
+        'user_id' => auth()->id(),
+        'name' => $validated['name'],
+        'phone' => $validated['phone'],
+        'quantity' => $validated['quantity'],
+        'payment_type' => $validated['payment_type'],
+        'message' => $validated['message'] ?? null,
+    ]);
+
+    // تقليل الكمية في جدول السيارات
+    $car->quantity -= $validated['quantity'];
+    $car->save();
+
+    return redirect()->back()->with('success', 'Your purchase request has been sent successfully!');
+}
 
     public function edit(Car $car)
     {

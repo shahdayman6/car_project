@@ -100,7 +100,7 @@
         {{-- Submit --}}
         <button type="submit"
             class="w-full bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 hover:from-pink-500 hover:via-purple-500 hover:to-blue-500 hover:scale-105 transform transition-all duration-300 px-6 py-3 rounded-xl text-white font-bold text-lg shadow-lg tracking-wide">
-            Send Purchase Request 🚀
+            Send Purchase Request 
         </button>
     </form>
 </div>

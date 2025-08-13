@@ -289,7 +289,7 @@
         class="absolute w-full h-full object-cover car-image car-{{ $index }}"
         style="opacity: {{ $i === 0 ? 1 : 0 }};"
     >
-@endforeach
+                                 @endforeach
                                 <button onclick="prevImage({{ $index }})" class="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-purple-700 bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">‹</button>
                                 <button onclick="nextImage({{ $index }})" class="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-purple-700 bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">›</button>
                             </div>
@@ -297,9 +297,10 @@
                                 <h2 class="text-xl font-bold text-purple-400 mb-2">{{ $car['name'] }}</h2>
                                 <p class="text-gray-300 mb-4">{{ $car['price'] }} $</p>
                                 <p class="text-gray-400 mb-2">Year: {{ $car['year'] }}</p>
+                                <p class="text-gray-400 mb-2">Available: {{ $car->stock }}</p>
                                 <a href="{{ route('cars.show', ['id' => $car->id]) }}" class="inline-block px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-800 transition">
-    View Details
-</a>
+                                               View Details
+                                </a>
                             </div>
                         </div>
                     @endforeach

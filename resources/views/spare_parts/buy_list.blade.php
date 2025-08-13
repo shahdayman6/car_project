@@ -8,18 +8,14 @@
         🔍 Buy Spare Parts
     </h1>
 
-    {{-- Search form --}}
-    <form method="GET" action="{{ route('spare-parts.buy') }}" class="mb-10 flex gap-3">
+    {{-- Search input --}}
+    <div class="mb-10 flex gap-3">
         <div class="flex items-center w-full bg-gray-800/60 rounded-2xl overflow-hidden border border-purple-500/50 focus-within:ring-2 focus-within:ring-pink-500 transition">
-            <span class="px-4 text-gray-400">🔎</span>
-            <input type="text" name="search" value="{{ $search }}" placeholder="Search spare parts..."
+            <span class="px-4 text-gray-400"></span>
+            <input type="text" id="search-input" placeholder="Search spare parts..."
                 class="w-full px-4 py-4 bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg">
         </div>
-        <button type="submit" 
-            class="px-8 py-4 bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 hover:scale-105 transform transition-all duration-300 rounded-2xl text-white font-bold shadow-lg text-lg">
-            Search
-        </button>
-    </form>
+    </div>
 
     {{-- Messages --}}
     @if(session('success'))
@@ -34,14 +30,18 @@
     @endif
 
     {{-- Spare parts list --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10">
+    <div id="spare-parts-list" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10">
         @forelse($spareParts as $part)
             @php
                 $images = $part->images;
                 $firstImage = is_array($images) && count($images) > 0 ? $images[0] : null;
             @endphp
 
-            <div class="bg-gray-800/50 border border-gray-700 rounded-3xl shadow-xl overflow-hidden group hover:scale-105 hover:shadow-2xl hover:border-purple-400/50 transform transition-all duration-500 relative">
+            <div class="spare-part-card bg-gray-800/50 border border-gray-700 rounded-3xl shadow-xl overflow-hidden 
+                        group hover:scale-105 hover:shadow-2xl hover:border-purple-400/50 transform transition-all duration-500 
+                        relative flex flex-col h-full"
+                 data-name="{{ strtolower($part->name) }}"
+                 data-description="{{ strtolower($part->description) }}">
                 
                 {{-- Image --}}
                 @if($firstImage)
@@ -59,20 +59,20 @@
                 </span>
 
                 {{-- Content --}}
-                <div class="p-6 flex flex-col h-full">
+                <div class="p-6 flex flex-col flex-grow">
                     <h2 class="text-xl font-extrabold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent mb-3">
                         {{ $part->name }}
                     </h2>
-                    <p class="text-sm text-gray-300 line-clamp-2 flex-grow">{{ $part->description }}</p>
+                    <p class="text-sm text-gray-300 line-clamp-2">{{ $part->description }}</p>
 
                     <div class="mt-4 text-sm space-y-1">
                         <p><span class="text-pink-400 font-semibold">Condition:</span> {{ ucfirst($part->condition) }}</p>
                         <p><span class="text-pink-400 font-semibold">Quantity:</span> {{ $part->quantity }}</p>
                     </div>
 
-                    {{-- Buy Button --}}
+                    {{-- Buy Button fixed at bottom --}}
                     <a href="{{ route('spare-parts.purchase', $part->id) }}"
-                       class="mt-6 flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 
+                       class="mt-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 
                               hover:scale-105 transform transition-all duration-300 rounded-2xl text-white font-bold shadow-md">
                         🛒 Buy Now
                     </a>
@@ -83,4 +83,23 @@
         @endforelse
     </div>
 </div>
+
+{{-- Client-side search --}}
+<script>
+document.getElementById('search-input').addEventListener('input', function () {
+    let query = this.value.toLowerCase();
+    let cards = document.querySelectorAll('.spare-part-card');
+
+    cards.forEach(card => {
+        let name = card.getAttribute('data-name');
+        let desc = card.getAttribute('data-description');
+
+        if (name.includes(query) || desc.includes(query)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
 @endsection

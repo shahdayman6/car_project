@@ -6,7 +6,53 @@
 >
     <h2 class="text-4xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-300 via-blue-300 to-pink-300 drop-shadow-lg tracking-wide">
         👤 My Profile
-    </h2>
+    </h2>  
+
+    {{-- Edit Profile --}}
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-12">
+
+       {{-- Profile Image --}}
+       <div class="relative">
+        <img src="{{ auth()->user()->image ? asset('storage/' . auth()->user()->image) : asset('images/default-avatar.png') }}"
+        alt="Profile Picture"
+        class="w-32 h-32 rounded-full border-4 border-purple-500 object-cover shadow-lg">
+       </div>
+
+
+        {{-- Form --}}
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="flex-1">
+            @csrf
+            @method('PUT')
+            <div class="grid gap-4">
+                {{-- Name --}}
+                <div>
+                    <label for="name" class="block text-sm font-semibold mb-1">Name</label>
+                    <input type="text" name="name" id="name" value="{{ auth()->user()->name }}"
+                           class="w-full px-4 py-2 rounded-xl bg-gray-900/50 border border-purple-500/50 text-white focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+
+                {{-- Image --}}
+                <div>
+                    <label for="profile_image" class="block text-sm font-semibold mb-1">Profile Image</label>
+                    <input type="file" name="profile_image" id="profile_image"
+                           class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                                  file:rounded-full file:border-0
+                                  file:text-sm file:font-semibold
+                                  file:bg-purple-600 file:text-white
+                                  hover:file:bg-purple-700">
+                </div>
+
+                {{-- Save button --}}
+                <div>
+                    <button type="submit"
+                            class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl font-semibold hover:scale-105 transition">
+                        💾 Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
 
     {{-- Cars I Sold --}}
     <section class="mb-16">

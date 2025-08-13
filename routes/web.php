@@ -18,6 +18,8 @@ Route::middleware(['auth'])->group(function () {
     // صفحة الشراء محمية ب login
     Route::get('/cars/{id}/buy', [CarController::class, 'buyPage'])->name('cars.buy');
     Route::post('/cars/{id}/buy', [CarController::class, 'buysubmit'])->name('cars.buy.submit');
+   
+
 
     // فورم طلب شراء سيارة
     Route::get('/buy-car', [CarRequestController::class, 'showForm'])->name('cars.request.form');
@@ -46,6 +48,7 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::delete('/cars/{car}', [ProfileController::class, 'destroyCar'])->name('profile.cars.delete');
     Route::delete('/purchases/{purchase}', [ProfileController::class, 'destroyPurchase'])->name('profile.purchases.delete');
@@ -84,12 +87,11 @@ Route::middleware('auth')->group(function () {
 
 // عرض الشكاوى للادمن فقط (محتاج تحققي صلاحية الادمن في الكنترولر أو ميدل وير)
 
-Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
     Route::get('/redirect', [ComplaintController::class, 'redirectBasedOnRole'])->name('redirect');
 
     // خلي صلاحية الدخول للصفحة دي لكل المستخدمين اللي سجلوا دخول فقط (مش شرط أدمن)
     Route::get('/admin/complaints', [ComplaintController::class, 'index'])->name('complaints.index');
-
     Route::get('/home', function() {
         return view('user.home');
     })->name('user.home');

@@ -76,5 +76,29 @@ class ProfileController extends Controller
     return redirect()->route('profile')->with('success', 'Rental request deleted successfully.');
 }
 
+public function update(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $user = auth()->user();
+    $user->name = $request->name;
+
+    if ($request->hasFile('profile_image')) {
+        // تخزين الصورة داخل public/profile_images
+        $path = $request->file('profile_image')->store('profile_images', 'public');
+
+        // حفظ المسار بدون كلمة storage/
+        $user->image = $path;
+    }
+
+    $user->save();
+
+    return back()->with('success', 'Profile updated successfully!');
+}
+
+
 }
 

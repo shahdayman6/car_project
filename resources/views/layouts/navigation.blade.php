@@ -12,7 +12,7 @@
             @auth
                 <div @click="open = !open" class="cursor-pointer text-right">
                     <img 
-                        src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('images/default-user-bw.png.jpg') }}" 
+                        src="{{ asset('storage/' . Auth::user()->image) }}" alt="Profile" class="w-10 h-10 rounded-full"
                         alt="User Avatar" 
                         class="w-16 h-16 rounded-full border-4 border-purple-500 shadow-xl inline-block"
                     />
