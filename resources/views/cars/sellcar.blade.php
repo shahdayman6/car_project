@@ -42,6 +42,20 @@
             </div>
         @endforeach
 
+        {{-- Quantity Field --}}
+        <div class="relative">
+            <label class="block mb-2 text-purple-300 font-semibold">Quantity</label>
+            <input 
+                type="number" 
+                name="quantity" 
+                min="1" 
+                value="1"
+                required 
+                class="w-full pl-4 p-3 rounded-xl bg-gray-900/60 text-white border border-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                placeholder="Enter number of cars"
+            >
+        </div>
+
         {{-- Submit Button --}}
         <div class="text-center mt-6">
             <button 
