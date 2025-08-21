@@ -31,7 +31,7 @@
             <!-- Confirm Button -->
             <button type="submit" 
                     class="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 font-semibold text-lg hover:from-purple-700 hover:to-pink-600 transition-all shadow-lg">
-                ✅ Confirm Booking
+                 Confirm Booking
             </button>
         </form>
     </div>

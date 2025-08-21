@@ -49,30 +49,30 @@ class ProfileController extends Controller
         return back()->with('error', 'Not authorized');
     }
 
-    public function destroyPurchase(PurchaseRequest $purchase)
-    {
-        if ($purchase->user_id === auth()->id()) {
+   public function destroyPurchase(PurchaseRequest $purchase)
+{
+    if ($purchase->user_id === auth()->id()) {
 
-            if ($purchase->product_type === 'car') {
-                $product = Car::find($purchase->product_id);
-            } elseif ($purchase->product_type === 'spare_part') {
-                $product = SparePart::find($purchase->product_id);
-            } else {
-                $product = null;
-            }
-
-            if ($product) {
-                $product->quantity += $purchase->quantity; // استرجاع الكمية فقط
-                $product->save();
-            }
-
-            $purchase->delete();
-
-            return back()->with('success', 'Purchase request deleted and stock restored!');
+        if ($purchase->product_type === 'car') {
+            $product = Car::find($purchase->product_id);
+        } elseif ($purchase->product_type === 'spare_part') {
+            $product = SparePart::find($purchase->product_id);
+        } else {
+            $product = null;
         }
 
-        return back()->with('error', 'Not authorized');
+        if ($product) {
+            $product->stock += $purchase->quantity; // استخدم stock بدل quantity
+            $product->save();
+        }
+
+        $purchase->delete();
+
+        return back()->with('success', 'Purchase request deleted and stock restored!');
     }
+
+    return back()->with('error', 'Not authorized');
+}
 
     public function destroySparePart(SparePart $sparePart)
     {
